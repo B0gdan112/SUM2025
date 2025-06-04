@@ -152,9 +152,10 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
   case WM_TIMER:
     GetCursorPos(&pt);
     ScreenToClient(hWnd, &pt);
+    SelectObject(hMemDC, GetStockObject(NULL_PEN));
     SelectObject(hMemDC, GetStockObject(DC_BRUSH));
     SetDCBrushColor(hMemDC, RGB(0, 0, 100));
-    Rectangle(hMemDC, 0, 0, W, H);
+    Rectangle(hMemDC, 0, 0, W + 1, H);
     DrawEye(hMemDC, 700 + 250 * sin(3 * (double)clock() / CLOCKS_PER_SEC), 350 + 250 * cos(3 * (double)clock() / CLOCKS_PER_SEC), 100, 50, pt.x, pt.y);
     DrawEye(hMemDC, 1100 + 250 * sin(3 * (double)clock() / CLOCKS_PER_SEC), 350 + 250 * cos(3 * (double)clock() / CLOCKS_PER_SEC), 100, 50, pt.x, pt.y);
     srand(30);
