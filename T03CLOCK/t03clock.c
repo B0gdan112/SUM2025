@@ -30,13 +30,16 @@
 LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
                               WPARAM wParam, LPARAM lParam );
 
-VOID DrawHand( HDC hDC, INT X, INT Y, INT R, INT r, INT g, INT b, INT W )
+VOID DrawHand( HDC hDC, INT X, INT Y, INT R, INT r, INT g, INT b, INT W, FLOAT ti )
 {
+  FLOAT angle;
   HPEN hPen, hOldPen;
-  hPen = CreatePen(PS_SOLID, W, (r, g, b));
+
+  hPen = CreatePen(PS_SOLID, W, RGB(r, g, b));
   hOldPen = SelectObject(hDC, hPen);
-  MoveToEx(hDC, X, Y, NULL);
-  LineTo(hDC, X + R, Y + R);
+  angle = ti * 2 * 3.1415 / 60;
+  MoveToEx(hDC, X + R * sin(angle), Y - R * cos(angle), NULL);
+  LineTo(hDC, X, Y);
   SelectObject(hDC, GetStockObject(DC_PEN));
   DeleteObject(hPen);
 }
@@ -109,9 +112,10 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
   PAINTSTRUCT ps;
   HBRUSH hBr;
   POINT pt;
+  SYSTEMTIME st;
   static HDC hMemDC, hMemDCLogo;
   static HBITMAP hBm, hBmLogo;
-  static INT W, H;
+  static INT W, H, size;
   static BITMAP bm;
 
   switch (Msg)
@@ -121,13 +125,16 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
     hMemDC = CreateCompatibleDC(hDC);
     hMemDCLogo = CreateCompatibleDC(hDC);
     ReleaseDC(hWnd, hDC);
-    hBmLogo = LoadImage(NULL, "clock.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
     SetStretchBltMode(hDC, COLORONCOLOR);
-    SetTimer(hWnd, 0, 0.01, NULL);
+    SetTimer(hWnd, 1, 30, NULL);
+    hBmLogo = LoadImage(NULL, "clock.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+    SelectObject(hMemDCLogo, hBmLogo);
     return 0;
+
   case WM_SIZE:
     H = HIWORD(lParam);
     W = LOWORD(lParam);
+    size = W < H ? W : H;
     if (hBm != NULL)
       DeleteObject(hBm);
     hDC = GetDC(hWnd);
@@ -137,10 +144,19 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
     return 0;
 
   case WM_PAINT:
-    GetObject(hBm, sizeof(BITMAP), &bm);
+    GetLocalTime(&st);
+    GetObject(hBmLogo, sizeof(BITMAP), &bm);
     hDC = BeginPaint(hWnd, &ps);
-    SelectObject(hMemDCLogo, hBmLogo);
-    BitBlt(hMemDC, 0, 0, bm.bmWidth, bm.bmHeight, hMemDCLogo, 0, 0, SRCCOPY);
+    SelectObject(hDC, GetStockObject(NULL_PEN));
+    SelectObject(hDC, GetStockObject(DC_BRUSH));
+    SetDCBrushColor(hDC, RGB(255, 255, 255));
+    SetDCPenColor(hDC, RGB(255, 255, 255));
+    Rectangle(hMemDC, 0, 0, W + 1, H + 1);
+    SetStretchBltMode(hDC, COLORONCOLOR);
+    StretchBlt(hMemDC, (W - size) / 2, (H - size) / 2, size, size, hMemDCLogo, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
+    DrawHand(hMemDC, W / 2, H / 2, size * 0.4, 255, 0, 0, 2, (st.wSecond + st.wMilliseconds / 1000));
+    DrawHand(hMemDC, W / 2, H / 2, size * 0.3, 0, 0, 0, 5, (st.wMinute + st.wSecond / 60));
+    DrawHand(hMemDC, W / 2, H / 2, size * 0.2, 0, 0, 0, 5, (st.wHour % 12 + st.wMinute / 60));
     BitBlt(hDC, 0, 0, W, H, hMemDC, 0, 0, SRCCOPY);
     EndPaint(hWnd, &ps);
     return 0;
@@ -154,7 +170,7 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
     DeleteObject(hBmLogo);
     DeleteDC(hMemDC);
     DeleteDC(hMemDCLogo);
-    KillTimer(hWnd, 0);
+    KillTimer(hWnd, 1);
     PostQuitMessage(0);
     return 0;
   }
