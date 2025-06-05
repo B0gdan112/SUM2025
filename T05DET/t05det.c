@@ -86,4 +86,4 @@ VOID main( VOID )
   Go(0);
   printf("Def is %f", Det);
   _getch();
-}
+} /* End of main function */
