@@ -40,7 +40,7 @@ BOOL LoadMatrix( CHAR *FileName )
 
 VOID Swap( DBL *A, DBL *B )
 {
-  INT tmp = *A;
+  DBL tmp = *A;
 
   *A = *B;
   *B = tmp;
