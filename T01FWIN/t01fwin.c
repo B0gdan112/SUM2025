@@ -95,7 +95,7 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
 {
   HDC hDC;
   PAINTSTRUCT ps;
-  POINT
+  POINT;
 
   switch (Msg)
   {
