@@ -7,7 +7,10 @@
 
 #include <math.h>
 #include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "globe.h"
+#include "mth.h"
 
 #include <windows.h>
 
@@ -20,7 +23,7 @@ VOID FlipFullScreen( HWND hWnd )
 {
   static BOOL IsFullScreen = FALSE;
   static RECT SaveRect;
- 
+
   if (!IsFullScreen)
   {
     HMONITOR hmon;
@@ -74,6 +77,57 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   WNDCLASS wc;
   static HWND hWnd;
   MSG msg;
+  CONSOLE_FONT_INFOEX cfi = {0};
+  MATR m =
+  {
+    {
+      {4, 3, 2, 1},
+      {3, 2, 2, 1},
+      {2, 2, 1, 0},
+      {1, 4, 4, 1}
+    }
+  }, m1, m2;
+  VEC v = VecSet(0, 8, 9), v1, v2;
+
+  m1 = MatrInverse(m);
+  m2 = MatrMulMatr(m, m1);
+  m2 = MatrMulMatr(m1, m);
+
+  m1 = MatrInverse(m);
+
+  v1 = VecMulNum(v, 3);
+  v2 = VecNeg(v);
+
+  AllocConsole();
+
+  SetConsoleTitle("Matrix");
+
+  cfi.cbSize = sizeof(CONSOLE_FONT_INFOEX);
+  GetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+  cfi.dwFontSize.Y = 30;
+  cfi.FontWeight = FW_BOLD;
+  SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+
+  freopen("CONOUT$", "w", stdout);
+  system("@chcp 1251 > nul");
+   printf("\x1b[38;2;%d;%d;%dm\x1b[48;2;%d;%d;%dm", 200, 0, 200, 0, 255, 100);
+  PrintMatrix(m);
+  printf("\n");
+  PrintMatrix(m1);
+  printf("\n");
+  PrintMatrix(m2);
+  printf("\n");
+  PrintVec(v);
+  printf("\n");
+  PrintVec(v1);
+  printf("\n");
+  PrintVec(v2);
+  printf("\n");
+  printf("%f", MatrDeterm(m));
+  fflush(stdout);
+
+
+  FreeConsole();
 
   wc.style = CS_VREDRAW | CS_HREDRAW;
   wc.cbClsExtra = 0;

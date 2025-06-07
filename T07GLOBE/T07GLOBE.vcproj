@@ -196,6 +196,10 @@
 				RelativePath=".\globe.h"
 				>
 			</File>
+			<File
+				RelativePath=".\mth.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

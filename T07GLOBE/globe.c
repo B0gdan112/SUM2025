@@ -8,6 +8,7 @@
 #include <math.h>
 #include "globe.h"
 #include <time.h>
+#include "mth.h"
 
 #include <windows.h>
 
@@ -20,7 +21,16 @@ static VEC GLB_Geom[GRID_H][GRID_W];
 static INT GLB_Ws, GLB_Hs;
 static DBL GLB_ProjDist = 0.1, GLB_ProjSize = 0.1, GLB_Wp, GLB_Hp;
 
-static DBL PI = 3.14159265359;
+DBL Power( DBL A, DBL B )
+{
+  INT i, a = 1;
+
+  for (i = 0; i < B; i++)
+    a *= A;
+  if (A < 0 && i % 2 == 0)
+    return -A;
+  return A;
+} /* End of 'RotateX' function */
 
 VOID GLB_Init( DBL R )
 {
@@ -31,9 +41,9 @@ VOID GLB_Init( DBL R )
   for (i = 0, t = 0; i < GRID_H; i++, t += PI / (GRID_H - 1))
     for (j = 0, f = 0; j < GRID_W; j++, f += 2 * PI / (GRID_W - 1))
     {
-      GLB_Geom[i][j].X = 3.8 * R * sin(t) * sin(f);
+      GLB_Geom[i][j].X = 3.8 * R * Power(sin(t), 1) * Power(sin(f), 1);
       GLB_Geom[i][j].Y = 2.5 * R * cos(t);
-      GLB_Geom[i][j].Z = 2.0 * R * sin(t) * cos(f);
+      GLB_Geom[i][j].Z = 2.0 * R * Power(sin(t), 1) * Power(cos(f), 1);
     }
 
   for (i = 0, t = 0; i < GRID_H; i++, t += PI / GRID_H)
@@ -86,15 +96,13 @@ VEC RotateZ( VEC P, DBL Angle )
 
 VOID GLB_Draw( HDC hDC, COLORREF color, INT s )
 {
-   INT i, j, size = GLB_Ws < GLB_Hs ? GLB_Ws : GLB_Hs;
-   DBL t, a, xp, yp;
+   INT i, j;
+   DBL t, xp, yp;
    POINT ps[4];
    VEC p;
    static POINT pnts[GRID_H][GRID_W];
 
    t = (double)clock() / CLOCKS_PER_SEC;
-   
-   size /= 3;
 
    if (GLB_Ws >= GLB_Hs)
      GLB_Wp = GLB_ProjSize * GLB_Ws / GLB_Hs, GLB_Hp = GLB_ProjSize;
@@ -105,6 +113,15 @@ VOID GLB_Draw( HDC hDC, COLORREF color, INT s )
    SelectObject(hDC, GetStockObject(NULL_PEN));
    SetDCBrushColor(hDC, color);
    /*SetDCPenColor(hDC, RGB(255, 255, 255));*/
+
+   /*p = MatrMulMatr(MatrMulMatr(
+     MatrMulMatr(
+     MatrMulMatr(
+     MatrRotateX(t * 30), MatrRotateY(t * 20)),
+     MatrRotateZ(t * 10)), 
+     MatrTranslate(VecSet(0, 2, 0))),
+     MatrView(VecSet1(8), VecSet(0, 0, 0), VecSet(0, 1, 0))
+     MatrFrustum(-GLB_Wp / 2, GLB_Wp / 2, -GLB_Hp / 2, GLB_Hp));*/
 
    for (i = 0; i < GRID_H; i++)
      for (j = 0; j < GRID_W; j++)

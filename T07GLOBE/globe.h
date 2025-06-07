@@ -7,12 +7,9 @@
 
 #include <windows.h>
 
-typedef double DBL;
+#include "mth.h"
 
-typedef struct tagVEC
-{
-  DBL X, Y, Z;
-} VEC;
+typedef double DBL;
 
 VOID GLB_Init( DBL R );
 VOID GLB_Resize( INT Ws, INT Hs );
