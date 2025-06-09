@@ -7,6 +7,7 @@
 #ifndef __mth_h_
 #define __mth_h_
 
+#include <stdio.h>
 #include <math.h>
 
 #include <windows.h>
@@ -20,7 +21,6 @@
 
 #define VecAddVec3(A, B, C) VecAddVec(A, VecAddVec(B, C))
 #define VecAddVec4(A, B, C, Â) VecAddVec(VecAddVec(A, B), VecAddVec(C, D))
-
 
 /* Base float point types */
 typedef double DBL;
@@ -119,7 +119,7 @@ __inline VEC VecCrossVec( VEC V1, VEC V2 )
 
   r.X = V1.Y * V2.Z - V2.Y * V1.Z;
   r.Y = -(V1.X * V2.Z - V2.X * V1.Z);
-  r.Z = V1.Y * V2.X - V2.Y * V1.X;
+  r.Z = V1.X * V2.Y - V2.X * V1.Y;
 
   return r;
 } /* End of 'VecCrossVec' function */
@@ -420,8 +420,8 @@ __inline MATR MatrFrustum( DBL L, DBL R, DBL B, DBL T, DBL N, DBL F )
     {
       {2 * N / (R - L), 0, 0, 0},
       {0, 2 * N / (T - B), 0, 0},
-      {(R + L)/(R - L), (T + B)/(T - B), (F + N)/(N - F), -1},
-      {0, 0, 2 * N / (N - F), 0}
+      {(R + L) / (R - L), (T + B) / (T - B), (F + N) / (N - F), -1},
+      {0, 0, 2 * N * F / (N - F), 0}
     }
   };
 

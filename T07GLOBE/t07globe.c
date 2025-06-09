@@ -188,8 +188,6 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
 {
   HDC hDC;
   PAINTSTRUCT ps;
-  HBRUSH hBr;
-  POINT pt;
   SYSTEMTIME st;
   static FLOAT t, t1;
   static HDC hMemDC;
@@ -205,7 +203,7 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
     ReleaseDC(hWnd, hDC);
 
     SetStretchBltMode(hDC, COLORONCOLOR);
-    SetTimer(hWnd, 1, 0.01, NULL);
+    SetTimer(hWnd, 1, 1, NULL);
 
     GLB_Init(1.0);
 
@@ -238,7 +236,7 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
     SetDCBrushColor(hMemDC, RGB(170, 36, 76));
     Rectangle(hMemDC, 0, 0, W + 1, H);
 
-    GLB_Draw(hMemDC, RGB(25, 25, 25), 5);
+    GLB_Draw(hMemDC, 5);
 
     BitBlt(hDC, 0, 0, W, H, hMemDC, 0, 0, SRCCOPY);
     EndPaint(hWnd, &ps);

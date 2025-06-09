@@ -6,11 +6,12 @@
  */
 
 #include <math.h>
-#include "globe.h"
 #include <time.h>
-#include "mth.h"
-
 #include <windows.h>
+
+#include "mth.h"
+#include "globe.h"
+
 
 typedef double DBL;
 
@@ -23,14 +24,10 @@ static DBL GLB_ProjDist = 0.1, GLB_ProjSize = 0.1, GLB_Wp, GLB_Hp;
 
 DBL Power( DBL A, DBL B )
 {
-  INT i, a = 1;
-
-  for (i = 0; i < B; i++)
-    a *= A;
-  if (A < 0 && i % 2 == 0)
-    return -A;
-  return A;
-} /* End of 'RotateX' function */
+  if (A < 0)
+    return -pow(-A, B);
+  return pow(A, B);
+} /* End of 'Power' function */
 
 VOID GLB_Init( DBL R )
 {
@@ -41,16 +38,16 @@ VOID GLB_Init( DBL R )
   for (i = 0, t = 0; i < GRID_H; i++, t += PI / (GRID_H - 1))
     for (j = 0, f = 0; j < GRID_W; j++, f += 2 * PI / (GRID_W - 1))
     {
-      GLB_Geom[i][j].X = 3.8 * R * Power(sin(t), 1) * Power(sin(f), 1);
-      GLB_Geom[i][j].Y = 2.5 * R * cos(t);
-      GLB_Geom[i][j].Z = 2.0 * R * Power(sin(t), 1) * Power(cos(f), 1);
+      GLB_Geom[i][j].X = 3 * R * Power(sin(t), 1) * Power(sin(f), 1);
+      GLB_Geom[i][j].Y = 3 * R * cos(t);
+      GLB_Geom[i][j].Z = 3 * R * Power(sin(t), 1) * Power(cos(f), 1);
     }
 
   for (i = 0, t = 0; i < GRID_H; i++, t += PI / GRID_H)
     for (j = 0, f = 0; j < GRID_W; j++, f += 2 * PI / GRID_W)
     {
-      pnts[i][j].x = GLB_Geom[i][j].X + GLB_Ws / 2;
-      pnts[i][j].y = GLB_Geom[i][j].Y - GLB_Hs / 2;
+      pnts[i][j].x = (INT)(GLB_Geom[i][j].X + GLB_Ws / 2);
+      pnts[i][j].y = (INT)(GLB_Geom[i][j].Y - GLB_Hs / 2);
     }
 } /* End of 'GLB_Init' function */
 
@@ -94,12 +91,14 @@ VEC RotateZ( VEC P, DBL Angle )
 } /* End of 'RotateZ' function */
 
 
-VOID GLB_Draw( HDC hDC, COLORREF color, INT s )
+VOID GLB_Draw( HDC hDC, INT s )
 {
    INT i, j;
-   DBL t, xp, yp;
+   DBL t;
    POINT ps[4];
-   VEC p;
+   MATR p;
+   VEC a;
+   COLORREF color = RGB(25, 55, 25);
    static POINT pnts[GRID_H][GRID_W];
 
    t = (double)clock() / CLOCKS_PER_SEC;
@@ -110,38 +109,32 @@ VOID GLB_Draw( HDC hDC, COLORREF color, INT s )
      GLB_Hp = GLB_ProjSize, GLB_Wp = GLB_ProjSize * GLB_Hs / GLB_Ws;
 
    SelectObject(hDC, GetStockObject(DC_BRUSH));
-   SelectObject(hDC, GetStockObject(NULL_PEN));
+   SelectObject(hDC, GetStockObject(DC_PEN));
    SetDCBrushColor(hDC, color);
-   /*SetDCPenColor(hDC, RGB(255, 255, 255));*/
+   SetDCPenColor(hDC, RGB(255, 255, 255));
 
-   /*p = MatrMulMatr(MatrMulMatr(
-     MatrMulMatr(
-     MatrMulMatr(
-     MatrRotateX(t * 30), MatrRotateY(t * 20)),
-     MatrRotateZ(t * 10)), 
-     MatrTranslate(VecSet(0, 2, 0))),
-     MatrView(VecSet1(8), VecSet(0, 0, 0), VecSet(0, 1, 0))
-     MatrFrustum(-GLB_Wp / 2, GLB_Wp / 2, -GLB_Hp / 2, GLB_Hp));*/
+   p = MatrMulMatr(MatrMulMatr(MatrMulMatr(MatrMulMatr(MatrMulMatr(MatrRotateX(t * 0.5), 
+     MatrRotateY(t * 0.5)), 
+     MatrRotateZ(t * 0.5)), 
+     MatrTranslate(VecSet(0, 2, 0))), 
+     MatrView(VecSet1(8), VecSet(0, 0, 0), VecSet(0, 1, 0))), 
+     MatrFrustum(-GLB_Wp / 2, GLB_Wp / 2, -GLB_Hp / 2, GLB_Hp / 2, GLB_ProjDist, 10));
 
    for (i = 0; i < GRID_H; i++)
      for (j = 0; j < GRID_W; j++)
      {
-       p = RotateZ(RotateY(RotateX(GLB_Geom[i][j], t * 30), t * 20), t * 10);
-       p.Z -= 8;
+       a = VecMulMatr(GLB_Geom[i][j], p);
 
-       xp = p.X * GLB_ProjDist / -p.Z;
-       yp = -p.Y * GLB_ProjDist / -p.Z;
-
-       pnts[i][j].x = xp * GLB_Ws / GLB_Wp + GLB_Ws / 2;
-       pnts[i][j].y = -yp * GLB_Hs / GLB_Hp + GLB_Hs / 2;
+       pnts[i][j].x = (INT)((a.X + 1) * GLB_Ws / 2);
+       pnts[i][j].y = (INT)((-a.Y + 1) * GLB_Hs / 2);
      }
 
-   /*for (i = 0; i < GRID_H; i++)
+   for (i = 0; i < GRID_H; i++)
      for (j = 0; j < GRID_W; j++)
      {
        Ellipse(hDC, pnts[i][j].x - s, pnts[i][j].y - s,
          pnts[i][j].x + s, pnts[i][j].y + s);
-     }*/
+     }
 
    for (i = 0; i < GRID_H; i++)
    {
@@ -158,9 +151,7 @@ VOID GLB_Draw( HDC hDC, COLORREF color, INT s )
        ps[2] = pnts[i + 1][j + 1];
        ps[3] = pnts[i + 1][j];
        
-       if (i % 2 == 0 && j % 2 == 0)
-         SetDCBrushColor(hDC, RGB(170, 180, 97));
-       else if (i % 2 == 1 && j % 2 == 1)
+       if (j % 2 == 0)
          SetDCBrushColor(hDC, RGB(24, 153, 88));
        else
          SetDCBrushColor(hDC, color);
