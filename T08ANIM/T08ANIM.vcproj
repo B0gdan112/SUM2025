@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="T07GLOBE"
-	ProjectGUID="{651005C0-BB4E-4E33-A2B1-E58DDEDE6693}"
-	RootNamespace="T07GLOBE"
+	Name="T08ANIM"
+	ProjectGUID="{B16396C7-801F-4CDF-BECE-6FC7C617CEAC}"
+	RootNamespace="T08ANIM"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="X:\TGRKIT\INCLUDE;$(OPENAL_DIR)Include;"
+				AdditionalIncludeDirectories="X:\TGRKIT\INCLUDE;.\src;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -119,7 +119,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="X:\TGRKIT\INCLUDE;$(OPENAL_DIR)Include;"
+				AdditionalIncludeDirectories="X:\TGRKIT\INCLUDE;$(OPENAL_DIR)Include;.\src;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;_WINDOWS"
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
@@ -179,35 +179,55 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\globe.c"
+				RelativePath=".\src\def.h"
 				>
 			</File>
-			<File
-				RelativePath=".\t07globe.c"
+			<Filter
+				Name="Math Support"
 				>
-			</File>
-			<File
-				RelativePath=".\timer.c"
+				<File
+					RelativePath="..\T07GLOBE\mth.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Animation System"
 				>
-			</File>
+				<Filter
+					Name="Rendering system"
+					>
+					<File
+						RelativePath=".\src\anim\rnd\rnd.h"
+						>
+					</File>
+					<File
+						RelativePath=".\src\anim\rnd\rndbase.c"
+						>
+					</File>
+					<File
+						RelativePath=".\src\anim\rnd\rnddata.c"
+						>
+					</File>
+					<File
+						RelativePath=".\src\anim\rnd\rndprim.c"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Windows Depended"
+				>
+				<File
+					RelativePath=".\src\win\main.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\globe.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mth.h"
-				>
-			</File>
-			<File
-				RelativePath=".\timer.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

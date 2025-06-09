@@ -42,54 +42,18 @@ VOID GLB_Init( DBL R )
       GLB_Geom[i][j].Y = 3 * R * cos(t);
       GLB_Geom[i][j].Z = 3 * R * Power(sin(t), 1) * Power(cos(f), 1);
     }
-
-  for (i = 0, t = 0; i < GRID_H; i++, t += PI / GRID_H)
-    for (j = 0, f = 0; j < GRID_W; j++, f += 2 * PI / GRID_W)
-    {
-      pnts[i][j].x = (INT)(GLB_Geom[i][j].X + GLB_Ws / 2);
-      pnts[i][j].y = (INT)(GLB_Geom[i][j].Y - GLB_Hs / 2);
-    }
 } /* End of 'GLB_Init' function */
 
 VOID GLB_Resize( INT Ws, INT Hs )
 {
   GLB_Ws = Ws;
   GLB_Hs = Hs;
+
+  if (GLB_Ws >= GLB_Hs)
+    GLB_Wp = GLB_ProjSize * GLB_Ws / GLB_Hs, GLB_Hp = GLB_ProjSize;
+  else
+    GLB_Hp = GLB_ProjSize, GLB_Wp = GLB_ProjSize * GLB_Hs / GLB_Ws;
 } /* End of 'GLB_Resize' function */
-
-VEC RotateX( VEC P, DBL Angle )
-{
-  VEC NewP;
-  DBL a = Angle * PI / 180, si = sin(a), co = cos(a);
- 
-  NewP.Y = P.Y * co - P.Z * si;
-  NewP.Z = P.Y * si + P.Z * co;
-  NewP.X = P.X;
-  return NewP;
-} /* End of 'RotateX' function */
-
-VEC RotateY( VEC P, DBL Angle )
-{
-  VEC NewP;
-  DBL a = Angle * PI / 180, si = sin(a), co = cos(a);
- 
-  NewP.Z = P.Z * co - P.X * si;
-  NewP.X = P.Z * si + P.X * co;
-  NewP.Y = P.Y;
-  return NewP;
-} /* End of 'RotateY' function */
-
-VEC RotateZ( VEC P, DBL Angle )
-{
-  VEC NewP;
-  DBL a = Angle * PI / 180, si = sin(a), co = cos(a);
- 
-  NewP.X = P.X * co - P.Y * si;
-  NewP.Y = P.X * si + P.Y * co;
-  NewP.Z = P.Z;
-  return NewP;
-} /* End of 'RotateZ' function */
-
 
 VOID GLB_Draw( HDC hDC, INT s )
 {
@@ -103,21 +67,16 @@ VOID GLB_Draw( HDC hDC, INT s )
 
    t = (double)clock() / CLOCKS_PER_SEC;
 
-   if (GLB_Ws >= GLB_Hs)
-     GLB_Wp = GLB_ProjSize * GLB_Ws / GLB_Hs, GLB_Hp = GLB_ProjSize;
-   else
-     GLB_Hp = GLB_ProjSize, GLB_Wp = GLB_ProjSize * GLB_Hs / GLB_Ws;
-
    SelectObject(hDC, GetStockObject(DC_BRUSH));
-   SelectObject(hDC, GetStockObject(DC_PEN));
+   SelectObject(hDC, GetStockObject(NULL_PEN));
    SetDCBrushColor(hDC, color);
-   SetDCPenColor(hDC, RGB(255, 255, 255));
+   /*SetDCPenColor(hDC, RGB(255, 255, 255));*/
 
-   p = MatrMulMatr(MatrMulMatr(MatrMulMatr(MatrMulMatr(MatrMulMatr(MatrRotateX(t * 0.5), 
-     MatrRotateY(t * 0.5)), 
-     MatrRotateZ(t * 0.5)), 
-     MatrTranslate(VecSet(0, 2, 0))), 
-     MatrView(VecSet1(8), VecSet(0, 0, 0), VecSet(0, 1, 0))), 
+   p = MatrMulMatr6(MatrRotateX(t * 0.5), 
+     MatrRotateY(t * 0.5), 
+     MatrRotateZ(t * 0.5), 
+     MatrTranslate(VecSet(0, 2, 0)), 
+     MatrView(VecSet1(8), VecSet(0, 0, 0), VecSet(0, 1, 0)), 
      MatrFrustum(-GLB_Wp / 2, GLB_Wp / 2, -GLB_Hp / 2, GLB_Hp / 2, GLB_ProjDist, 10));
 
    for (i = 0; i < GRID_H; i++)
@@ -129,12 +88,12 @@ VOID GLB_Draw( HDC hDC, INT s )
        pnts[i][j].y = (INT)((-a.Y + 1) * GLB_Hs / 2);
      }
 
-   for (i = 0; i < GRID_H; i++)
+   /*for (i = 0; i < GRID_H; i++)
      for (j = 0; j < GRID_W; j++)
      {
        Ellipse(hDC, pnts[i][j].x - s, pnts[i][j].y - s,
          pnts[i][j].x + s, pnts[i][j].y + s);
-     }
+     }*/
 
    for (i = 0; i < GRID_H; i++)
    {
@@ -150,7 +109,7 @@ VOID GLB_Draw( HDC hDC, INT s )
        ps[1] = pnts[i][j + 1];
        ps[2] = pnts[i + 1][j + 1];
        ps[3] = pnts[i + 1][j];
-       
+
        if (j % 2 == 0)
          SetDCBrushColor(hDC, RGB(24, 153, 88));
        else
@@ -158,7 +117,7 @@ VOID GLB_Draw( HDC hDC, INT s )
        if ((ps[0].x - ps[1].x) * (ps[0].y + ps[1].y ) +
            (ps[1].x - ps[2].x) * (ps[1].y + ps[2].y ) +
            (ps[2].x - ps[3].x) * (ps[2].y + ps[3].y ) +
-           (ps[3].x - ps[0].x) * (ps[3].y + ps[0].y ) <= 0)
+           (ps[3].x - ps[0].x) * (ps[3].y + ps[0].y ) >= 0)
          Polygon(hDC, ps, 4);
      }
 } /* End of 'GLB_Draw' function */

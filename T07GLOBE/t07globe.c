@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include "globe.h"
 #include "mth.h"
+#include "timer.h"
 
 #include <windows.h>
 
@@ -159,10 +160,16 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   ShowWindow(hWnd, SW_SHOWNORMAL);
   UpdateWindow(hWnd);
 
-  while (GetMessage(&msg, NULL, 0, 0))
+  while (TRUE)
   {
-    TranslateMessage(&msg);
-    DispatchMessage(&msg);
+    if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+    {
+      if (msg.message == WM_QUIT)
+        break;
+      DispatchMessage(&msg);
+    }
+    else
+      SendMessage(hWnd, WM_TIMER, 1, 0);
   }
   return msg.wParam;
 }
@@ -189,6 +196,7 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
   HDC hDC;
   PAINTSTRUCT ps;
   SYSTEMTIME st;
+  CHAR Buf[100];
   static FLOAT t, t1;
   static HDC hMemDC;
   static HBITMAP hBm;
@@ -206,6 +214,7 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
     SetTimer(hWnd, 1, 1, NULL);
 
     GLB_Init(1.0);
+    GLB_TimerInit();
 
     return 0;
 
@@ -238,10 +247,15 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
 
     GLB_Draw(hMemDC, 5);
 
+    SetBkMode(hMemDC, TRANSPARENT);
+    SetTextColor(hMemDC, RGB(0, 255, 0));
+    TextOut(hMemDC, 30, 30, Buf, sprintf(Buf, "FPS: %lf", FPS));
+
     BitBlt(hDC, 0, 0, W, H, hMemDC, 0, 0, SRCCOPY);
     EndPaint(hWnd, &ps);
     return 0;
   case WM_TIMER:
+    GLB_TimerResponse();
     InvalidateRect(hWnd, NULL, TRUE);
     return 0;
   case WM_KEYDOWN:
