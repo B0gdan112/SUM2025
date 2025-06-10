@@ -10,6 +10,7 @@ HWND BS7_hRndWnd;
 HDC BS7_hRndDCFrame;
 HBITMAP BS7_hRndBmFrame;
 INT BS7_RndFrameW, BS7_RndFrameH;
+
 DBL
   BS7_RndProjSize = 0.1,     /* Project plane fit square */
   BS7_RndProjDist = 0.1,     /* Distance to project plane from viewer (near) */

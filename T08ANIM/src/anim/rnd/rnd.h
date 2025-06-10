@@ -7,6 +7,7 @@
 #ifndef __rnd_h__
 #define __rnd_h__
 
+#include <string.h>
 #include "def.h"
 
 extern HWND BS7_hRndWnd;
@@ -24,20 +25,19 @@ extern MATR
   BS7_RndMatrProj, /* Projection coordinate system matrix */
   BS7_RndMatrVP;   /* Stored (View * Proj) matrix */
 
-typedef struct tagbs7PRIM
+typedef struct tagbs7VERTEX
 {
   VEC P;
-  INT NumOfV;
+} bs7VERTEX;
 
+typedef struct tagbs7PRIM
+{
+  bs7VERTEX *V;
+  INT NumOfV;
   INT *I;
   INT NumOfI;
   MATR Trans;
 } bs7PRIM;
-
-typedef struct tagbs7VERTEX
-{
-  VEC V;
-} bs7VERTEX;
 
 VOID BS7_RndInit( HWND hWnd );
 VOID BS7_RndClose( VOID );
@@ -47,5 +47,10 @@ VOID BS7_RndStart( VOID );
 VOID BS7_RndEnd( VOID );
 VOID BS7_RndProjSet( VOID );
 VOID BS7_RndCamSet( VEC Loc, VEC At, VEC Up );
+BOOL BS7_RndPrimCreate( bs7PRIM *Pr, INT NoofV, INT NoofI );
+VOID BS7_RndPrimFree( bs7PRIM *Pr );
+VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World );
+BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName );
+BOOL BS7_RndPrimCreateSphere( bs7PRIM *Pr, DBL R, INT W, INT H );
 
 #endif /* __def_h_ */

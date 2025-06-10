@@ -5,6 +5,8 @@
  *              Startup entry-point module.
  */
 
+#include <time.h>
+
 #include "anim/rnd/rnd.h"
 
 #define WND_CLASS_NAME "My window class"
@@ -101,6 +103,7 @@ LRESULT CALLBACK WindowFunc( HWND hWnd, UINT Msg,
   HDC hDC;
   PAINTSTRUCT ps;
   MINMAXINFO *minmax;
+  static bs7PRIM Pr, PrS, PrO;
 
   switch(Msg)
   {
@@ -109,10 +112,27 @@ LRESULT CALLBACK WindowFunc( HWND hWnd, UINT Msg,
     minmax->ptMinTrackSize.y += 100;
     minmax->ptMaxTrackSize.y = GetSystemMetrics(SM_CYMAXTRACK) +
       GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYBORDER) * 2;
-    return 0;
+    return 0; 
   case WM_CREATE:
     BS7_RndInit(hWnd);
-    SetTimer(hWnd, 1, 2, NULL);
+    if (BS7_RndPrimCreate(&Pr, 4, 6))
+    {
+      Pr.V[0].P = VecSet(0, 0, 0);
+      Pr.V[1].P = VecSet(2, 0, 0);
+      Pr.V[2].P = VecSet(0, 2, 0);
+      Pr.V[3].P = VecSet(2, 2, 0);
+ 
+      Pr.I[0] = 0;
+      Pr.I[1] = 1;
+      Pr.I[2] = 2;
+ 
+      Pr.I[3] = 2;
+      Pr.I[4] = 1;
+      Pr.I[5] = 3;
+    }
+    BS7_RndPrimCreateSphere(&PrS, 2.0, 15, 15);
+    BS7_RndPrimLoad(&PrO, "Monokuma.obj");
+    SetTimer(hWnd, 1, 1, NULL);
     return 0;
   case WM_SIZE:
     BS7_RndResize(LOWORD(lParam), HIWORD(lParam));
@@ -120,7 +140,14 @@ LRESULT CALLBACK WindowFunc( HWND hWnd, UINT Msg,
     return 0;
   case WM_TIMER:
     BS7_RndStart();
+    BS7_RndCamSet(VecSet(5, 5, 5), VecSet(0, 0, 0), VecSet(0, 1, 0));
+    BS7_RndPrimDraw(&PrS, MatrRotateZ(1 * clock() / 1000.0));
+    BS7_RndPrimDraw(&Pr, MatrRotateZ(3 * clock() / 1000.0));
+    BS7_RndPrimDraw(&PrO, MatrMulMatr(MatrScale(VecSet(2, 2, 2)), MatrRotateZ(3 * clock() / 1000.0)));
     BS7_RndEnd();
+    hDC = GetDC(hWnd);
+    BS7_RndCopyFrame(hDC);
+    ReleaseDC(hWnd, hDC);
     return 0;
   case WM_ERASEBKGND:
     return 1;
@@ -130,9 +157,12 @@ LRESULT CALLBACK WindowFunc( HWND hWnd, UINT Msg,
     EndPaint(hWnd, &ps);
     return 0;
   case WM_DESTROY:
+    BS7_RndPrimFree(&PrS);
+    BS7_RndPrimFree(&Pr);
+    BS7_RndPrimFree(&PrO);
     BS7_RndClose();
     KillTimer(hWnd, 1);
-    PostQuitMessage(30);
+    PostQuitMessage(1);
     return 0;
   }
   return DefWindowProc(hWnd, Msg, wParam, lParam);

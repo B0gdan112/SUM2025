@@ -4,4 +4,6 @@
  * DATE: 09.06.2025
  */
 
+#include "def.h"
 #include "rnd.h"
+
