@@ -7,7 +7,7 @@
 
 #include <time.h>
 
-#include "anim/rnd/rnd.h"
+#include "unit/units.h"
 
 #define WND_CLASS_NAME "My window class"
 

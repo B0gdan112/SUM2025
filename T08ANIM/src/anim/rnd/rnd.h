@@ -4,8 +4,8 @@
  * DATE: 09.06.2025
  */
 
-#ifndef __rnd_h__
-#define __rnd_h__
+#ifndef __rnd_h_
+#define __rnd_h_
 
 #include <string.h>
 #include "def.h"
