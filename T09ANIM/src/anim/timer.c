@@ -36,8 +36,8 @@ VOID BS7_TimerResponse( VOID )
  
   QueryPerformanceCounter(&t);
   /* Global time */
-  BS7_Anim.GlobalTime = (FLT)(t.QuadPart - StartTime) / TimePerSec;
-  BS7_Anim.GlobalDeltaTime = (FLT)(t.QuadPart - OldTime) / TimePerSec;
+  BS7_Anim.GlobalTime = (DBL)(t.QuadPart - StartTime) / TimePerSec;
+  BS7_Anim.GlobalDeltaTime = (DBL)(t.QuadPart - OldTime) / TimePerSec;
   /* Time with pause */
   if (BS7_Anim.IsPause)
   {
@@ -47,14 +47,14 @@ VOID BS7_TimerResponse( VOID )
   else
   {
     BS7_Anim.DeltaTime = BS7_Anim.GlobalDeltaTime;
-    BS7_Anim.Time = (FLT)(t.QuadPart - PauseTime - StartTime) / TimePerSec;
+    BS7_Anim.Time = (DBL)(t.QuadPart - PauseTime - StartTime) / TimePerSec;
   }
  
   /* FPS */
   FrameCounter++;
   if (t.QuadPart - OldTimeFPS > TimePerSec)
   {
-    BS7_Anim.FPS = FrameCounter * TimePerSec / (FLT)(t.QuadPart - OldTimeFPS);
+    BS7_Anim.FPS = FrameCounter * TimePerSec / (DBL)(t.QuadPart - OldTimeFPS);
     OldTimeFPS = t.QuadPart;
     FrameCounter = 0;
   }

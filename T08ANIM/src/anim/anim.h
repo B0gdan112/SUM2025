@@ -36,9 +36,21 @@ typedef struct tagbs7ANIM
 
   DBL GlobalTime, GlobalDeltaTime, Time, DeltaTime, FPS;
   BOOL IsPause;
+
+  BYTE Keys[256];
+  BYTE KeysClick[256];
+  BYTE KeysOld[256];
+
+  INT Mx, My, Mz, Mdx, Mdy, Mdz;
+
+  BYTE JBut[32], JButOld[32], JButClick[32];
+  INT JPov;
+  DBL JX, JY, JZ, JR;
 };
 
 extern bs7ANIM BS7_Anim;
+extern bs7UNIT BS7_Unit;
+extern INT BS7_MouseWheel;
 
 VOID BS7_AnimInit( HWND hWnd );
 VOID BS7_AnimClose( VOID );
@@ -51,6 +63,8 @@ VOID BS7_DoExit( VOID );
 bs7UNIT * BS7_AnimUnitCreate( INT size );
 VOID BS7_TimerInit( VOID );
 VOID BS7_TimerResponse( VOID );
+VOID BS7_AnimInputInit( VOID );
+VOID BS7_AnimInputResponse( VOID );
 
 #endif /*__anim_h_ */
 

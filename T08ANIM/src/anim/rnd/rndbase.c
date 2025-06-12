@@ -17,7 +17,7 @@ VOID BS7_RndInit( HWND hWnd )
 
   BS7_hRndBmFrame = NULL;
   BS7_RndResize(30, 30);
-  BS7_RndCamSet(VecSet1(1), VecSet1(0), VecSet(0, 1, 0));
+  BS7_RndCamSet(VecSet1(3), VecSet1(0), VecSet(0, 1, 0));
 }
 
 VOID BS7_RndClose( VOID )
@@ -30,8 +30,6 @@ VOID BS7_RndClose( VOID )
 VOID BS7_RndResize( INT W, INT H )
 {
   HDC hDC = GetDC(BS7_hRndWnd);
-
-  BS7_RndProjSet();
  
   if (BS7_hRndBmFrame != NULL)
     DeleteObject(BS7_hRndBmFrame);

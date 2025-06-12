@@ -15,7 +15,7 @@
 
 extern HWND BS7_hRndWnd;
 extern HDC BS7_hRndDC;   /* Work window device context */
-extern HGLRC BS7_hRndGC; /* openGL render context */
+extern HGLRC BS7_hRndGLRC; /* openGL render context */
 extern INT BS7_RndFrameW, BS7_RndFrameH;
 
 extern DBL
@@ -31,6 +31,9 @@ extern MATR
 typedef struct tagbs7VERTEX
 {
   VEC P;
+  VEC2 T;
+  VEC N;
+  VEC4 C;
 } bs7VERTEX;
 
 typedef struct tagbs7PRIM
@@ -55,5 +58,6 @@ VOID BS7_RndPrimFree( bs7PRIM *Pr );
 VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World );
 BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName );
 BOOL BS7_RndPrimCreateSphere( bs7PRIM *Pr, DBL R, INT W, INT H );
+VOID BS7_RndPrimTriMeshAutoNormals( bs7VERTEX *V, INT NumOfV, INT *Ind, INT NumOfI );
 
 #endif /* __rnd_h_ */

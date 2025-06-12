@@ -7,7 +7,7 @@
 
 #include <time.h>
 
-#include "unit/units.h"
+#include "units/units.h"
 
 #define WND_CLASS_NAME "My window class"
 
@@ -35,7 +35,8 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   WNDCLASS wc;
   static HWND hWnd;
   MSG msg;
-  CONSOLE_FONT_INFOEX cfi = {0};
+
+  SetDbgMemHooks();
 
   wc.style = CS_VREDRAW | CS_HREDRAW;
   wc.cbClsExtra = 0;
@@ -65,7 +66,8 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
     NULL);
 
   ShowWindow(hWnd, SW_SHOWNORMAL);
-  UpdateWindow(hWnd);
+  BS7_AnimUnitAdd(BS7_UnitCreateKuma());
+  BS7_AnimUnitAdd(BS7_UnitCreateInit());
 
   while (TRUE)
   {
@@ -79,10 +81,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
       SendMessage(hWnd, WM_TIMER, 1, 0);
   }
   return msg.wParam;
-}
-
-/* End of 'WinMain' function */
-
+} /* End of 'WinMain' function */
 
 /* Window handle function.
  * ARGUMENTS:
@@ -103,7 +102,7 @@ LRESULT CALLBACK WindowFunc( HWND hWnd, UINT Msg,
   HDC hDC;
   PAINTSTRUCT ps;
   MINMAXINFO *minmax;
-  static bs7PRIM Pr, PrS, PrO;
+  INT BS7_MouseWheel = 0;
 
   switch(Msg)
   {
@@ -114,59 +113,51 @@ LRESULT CALLBACK WindowFunc( HWND hWnd, UINT Msg,
       GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYBORDER) * 2;
     return 0; 
   case WM_CREATE:
-    BS7_RndInit(hWnd);
-    if (BS7_RndPrimCreate(&Pr, 4, 6))
-    {
-      Pr.V[0].P = VecSet(0, 0, 0);
-      Pr.V[1].P = VecSet(2, 0, 0);
-      Pr.V[2].P = VecSet(0, 2, 0);
-      Pr.V[3].P = VecSet(2, 2, 0);
- 
-      Pr.I[0] = 0;
-      Pr.I[1] = 1;
-      Pr.I[2] = 2;
- 
-      Pr.I[3] = 2;
-      Pr.I[4] = 1;
-      Pr.I[5] = 3;
-    }
-    BS7_RndPrimCreateSphere(&PrS, 2.0, 15, 15);
-    BS7_RndPrimLoad(&PrO, "Monokuma.obj");
+    BS7_AnimInit(hWnd);
     SetTimer(hWnd, 1, 1, NULL);
     return 0;
   case WM_SIZE:
-    BS7_RndResize(LOWORD(lParam), HIWORD(lParam));
+    BS7_AnimResize(LOWORD(lParam), HIWORD(lParam));
     SendMessage(hWnd, WM_TIMER, 1, 0);
     return 0;
   case WM_TIMER:
-    BS7_RndStart();
-    BS7_RndCamSet(VecSet(5, 5, 5), VecSet(0, 0, 0), VecSet(0, 1, 0));
-    BS7_RndPrimDraw(&PrS, MatrRotateZ(1 * clock() / 1000.0));
-    BS7_RndPrimDraw(&Pr, MatrRotateZ(3 * clock() / 1000.0));
-    BS7_RndPrimDraw(&PrO, MatrMulMatr(MatrScale(VecSet(2, 2, 2)), MatrRotateZ(3 * clock() / 1000.0)));
-    BS7_RndEnd();
+    BS7_AnimRender();
+
     hDC = GetDC(hWnd);
-    BS7_RndCopyFrame(hDC);
+    BS7_AnimCopyFrame(hDC);
     ReleaseDC(hWnd, hDC);
+
     return 0;
+  case WM_MOUSEWHEEL:
+    BS7_MouseWheel += (SHORT)HIWORD(wParam);
+    return 0;
+  /*case WM_KEYDOWN:
+    if (wParam == VK_ESCAPE)
+    {
+      DestroyWindow(hWnd);
+      return 0;
+    }
+    else if (wParam == VK_F11)
+    {
+      BS7_AnimFlipFullScreen();
+      return 0;
+    }
+    else if (wParam == 'P')
+      BS7_Anim.IsPause = !BS7_Anim.IsPause;*/
   case WM_ERASEBKGND:
     return 1;
   case WM_PAINT:
     hDC = BeginPaint(hWnd, &ps);
-    BS7_RndCopyFrame(hDC);
+    BS7_AnimCopyFrame(hDC);
     EndPaint(hWnd, &ps);
     return 0;
   case WM_DESTROY:
-    BS7_RndPrimFree(&PrS);
-    BS7_RndPrimFree(&Pr);
-    BS7_RndPrimFree(&PrO);
-    BS7_RndClose();
+    BS7_AnimClose();
     KillTimer(hWnd, 1);
     PostQuitMessage(1);
     return 0;
   }
   return DefWindowProc(hWnd, Msg, wParam, lParam);
-}
-/* End of 'WindowFunc' function */
+} /* End of 'WindowFunc' function */
 
 /* END OF 't08anim.c' FILE */

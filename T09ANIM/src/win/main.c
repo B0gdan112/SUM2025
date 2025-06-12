@@ -126,19 +126,6 @@ LRESULT CALLBACK WindowFunc( HWND hWnd, UINT Msg,
   case WM_MOUSEWHEEL:
     BS7_MouseWheel += (SHORT)HIWORD(wParam);
     return 0;
-  /*case WM_KEYDOWN:
-    if (wParam == VK_ESCAPE)
-    {
-      DestroyWindow(hWnd);
-      return 0;
-    }
-    else if (wParam == VK_F11)
-    {
-      BS7_AnimFlipFullScreen();
-      return 0;
-    }
-    else if (wParam == 'P')
-      BS7_Anim.IsPause = !BS7_Anim.IsPause;*/
   case WM_ERASEBKGND:
     return 1;
   case WM_PAINT:

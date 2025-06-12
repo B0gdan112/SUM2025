@@ -4,8 +4,7 @@
  * DATE: 10.06.2025
  */
 
-#include "anim/anim.h"
-#include "unit/units.h"
+#include "units/units.h"
 
 static VOID BS7_UnitInit( bs7UNIT *Uni, bs7ANIM *Ani )
 {
@@ -23,7 +22,7 @@ static VOID BS7_UnitRender( bs7UNIT *Uni, bs7ANIM *Ani )
 {
 } /*End of 'BS7_UnitResponse' function*/
 
-static bs7UNIT * BS7_AnimUnitCreate( INT Size )
+bs7UNIT * BS7_AnimUnitCreate( INT Size )
 {
   bs7UNIT *Uni;
  

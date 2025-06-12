@@ -6,59 +6,117 @@
 
 #include "rnd.h"
 
+#include <wglew.h>
+#include <gl/wglext.h>
+
 #pragma comment(lib, "opengl32")
+
+HGLRC BS7_hRndGLRC;
 
 VOID BS7_RndInit( HWND hWnd )
 {
+  INT i, num;
+  HGLRC hRC;
+  PIXELFORMATDESCRIPTOR pfd = {0};
+  INT PixelAttribs[] =
+  {
+    WGL_DRAW_TO_WINDOW_ARB, TRUE,
+    WGL_SUPPORT_OPENGL_ARB, TRUE,
+    WGL_DOUBLE_BUFFER_ARB, TRUE,
+    WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
+    WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
+    WGL_COLOR_BITS_ARB, 32,
+    WGL_DEPTH_BITS_ARB, 32,
+    0
+  };
+  INT ContextAttribs[] =
+  {
+    WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
+    WGL_CONTEXT_MINOR_VERSION_ARB, 6,
+    WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
+                                  /* WGL_CONTEXT_CORE_PROFILE_BIT_ARB, */
+    0
+  };
+ 
+  /* Store window handle */
   BS7_hRndWnd = hWnd;
-
+ 
+  /* Get window DC */
   BS7_hRndDC = GetDC(hWnd);
+ 
+  /* OpenGL init: pixel format setup */
+  pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+  pfd.nVersion = 1;
+  pfd.dwFlags = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL;
+  pfd.cColorBits = 32;
+  pfd.cDepthBits = 32;
+  i = ChoosePixelFormat(BS7_hRndDC, &pfd);
+  DescribePixelFormat(BS7_hRndDC, i, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+  SetPixelFormat(BS7_hRndDC, i, &pfd);
+ 
+  /* OpenGL init: setup rendering context */
+  BS7_hRndGLRC = wglCreateContext(BS7_hRndDC);
+  wglMakeCurrent(BS7_hRndDC, BS7_hRndGLRC);
+ 
+  /* Initializing GLEW library */
+  if (glewInit() != GLEW_OK)
+  {
+    MessageBox(BS7_hRndWnd, "Error extensions initializing", "Error", MB_ICONERROR | MB_OK);
+    exit(0);
+  }
+ 
+  /* Enable a new OpenGL profile support */
+  wglChoosePixelFormatARB(BS7_hRndDC, PixelAttribs, NULL, 1, &i, &num);
+  hRC = wglCreateContextAttribsARB(BS7_hRndDC, NULL, ContextAttribs);
+ 
+  wglMakeCurrent(NULL, NULL);
+  wglDeleteContext(BS7_hRndGLRC);
+ 
+  BS7_hRndGLRC = hRC;
+  wglMakeCurrent(BS7_hRndDC, BS7_hRndGLRC);
 
-  BS7_RndResize(30, 30);
+  wglSwapIntervalEXT(1);
+ 
+  /* Set default render parameters */
+  BS7_RndResize(47, 47);
   BS7_RndCamSet(VecSet1(8), VecSet1(0), VecSet(0, 1, 0));
 }
 
 VOID BS7_RndClose( VOID )
 {
+  wglMakeCurrent(NULL, NULL);
+  wglDeleteContext(BS7_hRndGLRC);
   ReleaseDC(BS7_hRndWnd, BS7_hRndDC);
 }
 
 VOID BS7_RndResize( INT W, INT H )
 {
+  glViewport(0, 0, W, H);
+ 
+  /* Setup projection */
   BS7_RndFrameW = W;
   BS7_RndFrameH = H;
-
   BS7_RndProjSet();
 }
-
+ 
 VOID BS7_RndCopyFrame( VOID )
 {
   SwapBuffers(BS7_hRndDC);
 }
-
-
+ 
 VOID BS7_RndStart( VOID )
 {
-  /* BS7_RndCamSet(VecSet(5, 5, 5), VecSet(0, 0, 0), VecSet(0, 1, 0));
-  m = BS7_RndMatrVP;
-
-  p1 = VecSet(0, 0, 0);
-  p2 = VecSet(1, 0, 0);
-
-  p = VecMulMatr(p1, m);
-  pnts[0].x = (INT)((p.X + 1) * BS7_RndFrameW / 2);
-  pnts[0].y = (INT)((-p.Y + 1) * BS7_RndFrameH / 2);
-
-  p = VecMulMatr(p2, m);
-  pnts[1].x = (INT)((p.X + 1) * BS7_RndFrameW / 2);
-  pnts[1].y = (INT)((-p.Y + 1) * BS7_RndFrameH / 2);
-
-  MoveToEx(BS7_hRndDCFrame, pnts[0].x, pnts[0].y, NULL);
-  LineTo(BS7_hRndDCFrame, pnts[1].x, pnts[1].y); */
+  FLT ClearColor[4] = {0.30, 0.47, 0.8, 1};
+  FLT DepthClearValue = 1;
+ 
+  /* Clear frame */
+  glClearBufferfv(GL_COLOR, 0, ClearColor);
+  glClearBufferfv(GL_DEPTH, 0, &DepthClearValue);
 }
 
 VOID BS7_RndEnd( VOID )
 {
+  glFinish();
 }
 
 VOID BS7_RndProjSet( VOID )

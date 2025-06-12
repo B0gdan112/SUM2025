@@ -16,13 +16,6 @@ static UINT64
     TimePerSec,   /* Timer resolution */
     FrameCounter; /* Frames counter */
 
-DBL
-    GlobalTime, GlobalDeltaTime, /* Global time and interframe interval */
-    Time, DeltaTime,             /* Time with pause and interframe interval */
-    FPS;                         /* Frames per second value */
-BOOL
-    IsPause; 
-
 VOID BS7_TimerInit( VOID )
 {
   LARGE_INTEGER t;
@@ -32,8 +25,8 @@ VOID BS7_TimerInit( VOID )
   QueryPerformanceCounter(&t);
   StartTime = OldTime = OldTimeFPS = t.QuadPart;
   FrameCounter = 0;
-  IsPause = FALSE;
-  FPS = 30.0;
+  BS7_Anim.IsPause = FALSE;
+  BS7_Anim.FPS = 30.0;
   PauseTime = 0; 
 }
 
@@ -46,14 +39,14 @@ VOID BS7_TimerResponse( VOID )
   BS7_Anim.GlobalTime = (DBL)(t.QuadPart - StartTime) / TimePerSec;
   BS7_Anim.GlobalDeltaTime = (DBL)(t.QuadPart - OldTime) / TimePerSec;
   /* Time with pause */
-  if (IsPause)
+  if (BS7_Anim.IsPause)
   {
     BS7_Anim.DeltaTime = 0;
     PauseTime += t.QuadPart - OldTime;
   }
   else
   {
-    BS7_Anim.DeltaTime = GlobalDeltaTime;
+    BS7_Anim.DeltaTime = BS7_Anim.GlobalDeltaTime;
     BS7_Anim.Time = (DBL)(t.QuadPart - PauseTime - StartTime) / TimePerSec;
   }
  

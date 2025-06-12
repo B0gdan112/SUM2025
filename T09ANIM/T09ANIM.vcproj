@@ -186,7 +186,7 @@
 				Name="Math Support"
 				>
 				<File
-					RelativePath="..\T07GLOBE\mth.h"
+					RelativePath=".\src\mth\mth.h"
 					>
 				</File>
 			</Filter>

@@ -38,15 +38,26 @@ static VOID BS7_UnitResponse( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
   if (Ani->KeysClick['P'])
     Ani->IsPause = !Ani->IsPause;
   if (Ani->KeysClick[VK_ESCAPE])
-    DestroyWindow(Ani->hWnd); 
+    DestroyWindow(BS7_Anim.hWnd); 
 } /*End of 'BS7_UnitResponse' function*/
 
 static VOID BS7_UnitRender( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
 {
-  static CHAR Buf[102];
+  /*INT i, len;
+  RECT rc = {0, 0, Ani->W, Ani->H};
+  static CHAR Buf[10000];
 
-  sprintf(Buf, "CGSG Animation: FPS = %.5f %s %s %s", Ani->FPS, glGetString(GL_RENDERER), glGetString(GL_VENDOR), glGetString(GL_VERSION));
-  SetWindowText(Ani->hWnd, Buf);
+  len = sprintf(Buf, "Keys: ");
+  for (i = 0; i < 256; i++)
+    len += sprintf(Buf + len, "%02X:%s ", i, Ani->Keys[i] ? "*" : " ");
+
+  if (Ani->Keys[VK_F11] || Ani->KeysClick[0x7A])
+    BS7_AnimFlipFullScreen();
+
+  SetBkMode(Ani->hDC, TRANSPARENT);
+  SetTextColor(Ani->hDC, RGB(255, 255, 255));
+  DrawText(Ani->hDC, Buf, len, &rc, DT_WORDBREAK | DT_CENTER | DT_BOTTOM);*/
+
 } /*End of 'BS7_UnitRender' function*/
 
 bs7UNIT * BS7_UnitCreateInit( VOID )

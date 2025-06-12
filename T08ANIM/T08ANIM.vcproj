@@ -202,6 +202,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\anim\input.c"
+					>
+				</File>
+				<File
 					RelativePath=".\src\anim\timer.c"
 					>
 				</File>
@@ -242,11 +246,19 @@
 				Name="Unit Samples"
 				>
 				<File
-					RelativePath=".\unit\u_ball.c"
+					RelativePath=".\src\units\u_ball.c"
 					>
 				</File>
 				<File
-					RelativePath=".\src\unit\units.h"
+					RelativePath=".\src\units\u_ctrl.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\units\u_monokuma.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\units\units.h"
 					>
 				</File>
 			</Filter>

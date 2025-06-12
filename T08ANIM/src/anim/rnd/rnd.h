@@ -53,4 +53,4 @@ VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World );
 BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName );
 BOOL BS7_RndPrimCreateSphere( bs7PRIM *Pr, DBL R, INT W, INT H );
 
-#endif /* __def_h_ */
+#endif /* __rnd_h_ */

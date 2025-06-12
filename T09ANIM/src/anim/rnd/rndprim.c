@@ -34,20 +34,33 @@ VOID BS7_RndPrimFree( bs7PRIM *Pr )
   memset(Pr, 0, sizeof(bs7PRIM));
 }
 
+/* Draw primitive function.
+ * ARGUMENTS:
+ *   - pointer to primitive to free:
+ *       BS7PRIM *Pr;
+ *   - transformation 'world' matrix:
+ *       MATR World;
+ * RETURNS: None.
+ */
 VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
 {
   INT i;
-
-  for (i = 0; i < Pr->NumOfI; i += 3)
-  { 
-    /*
-    MoveToEx(BS7_hRndDCFrame, pnts[Pr->I[i]].x, pnts[Pr->I[i]].y, NULL);
-    LineTo(BS7_hRndDCFrame, pnts[Pr->I[i + 1]].x, pnts[Pr->I[i + 1]].y);
-    LineTo(BS7_hRndDCFrame, pnts[Pr->I[i + 2]].x, pnts[Pr->I[i + 2]].y);
-    LineTo(BS7_hRndDCFrame, pnts[Pr->I[i]].x, pnts[Pr->I[i]].y);
-    */
+  MATR wvp = MatrMulMatr3(Pr->Trans, World, BS7_RndMatrVP);
+  VEC L = VecNormalize(VecSet(1, 3, 2));
+ 
+  glLoadMatrixf(wvp.A[0]);
+ 
+  glBegin(GL_TRIANGLES);
+  for (i = 0; i < Pr->NumOfI; i++)
+  {
+    FLT nl = VecDotVec(L, Pr->V[Pr->I[i]].N);
+    VEC Color = VecMulNum(VecSet(0.8, 0.47, 0.30), nl < 0.1 ? 0.1 : nl);
+ 
+    glColor3fv(&Color.X);
+    glVertex3fv(&Pr->V[Pr->I[i]].P.X);
   }
-}
+  glEnd();
+} /* End of 'BS7_RndPrimDraw' function */
 
 BOOL BS7_RndPrimCreateSphere( bs7PRIM *Pr, DBL R, INT W, INT H )
 {
@@ -159,10 +172,40 @@ BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName )
       }
     }
   }
- 
+  BS7_RndPrimTriMeshAutoNormals(Pr->V, vn, Pr->I, fn);
   fclose(F);
   return TRUE;
 } /* End of 'BS7_RndPrimCreateSphere' function */
 
+VOID BS7_RndPrimTriMeshAutoNormals( bs7VERTEX *V, INT NumOfV, INT *Ind, INT NumOfI )
+{
+  INT i;
+  VEC L = VecNormalize(VecSet(1, 3, 2));
 
+  for (i = 0; i < NumOfV; i++)
+    V[i].N = VecSet1(0);
+
+  for (i = 0; i < NumOfI; i += 3)
+  {
+    bs7VERTEX 
+      *P0 = &V[Ind[i]],
+      *P1 = &V[Ind[i + 1]],
+      *P2 = &V[Ind[i + 2]];
+    VEC N = VecNormalize(VecCrossVec(VecSubVec(P1->P, P0->P), VecSubVec(P2->P, P0->P)));
+ 
+    P0->N = VecAddVec(P0->N, N);
+    P1->N = VecAddVec(P1->N, N);
+    P2->N = VecAddVec(P2->N, N);
+  }
+ 
+  for (i = 0; i < NumOfV; i++)
+    V[i].N = VecNormalize(V[i].N);
+ 
+  for (i = 0; i < NumOfV; i++)
+  {
+    FLT nl = VecDotVec(L, V[i].N);
+    
+    V[i].C = Vec4SetVec3(VecMulNum(VecSet(0.8, 0.47, 0.30), nl < 0.1 ? 0.1 : nl), 0);
+  }
+} /* End of 'BS7_RndPrimTriMeshAutoNormals' function */
 

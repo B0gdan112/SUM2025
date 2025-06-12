@@ -19,6 +19,7 @@ VOID BS7_AnimInit( HWND hWnd )
   BS7_Anim.H = BS7_RndFrameH;
 
   BS7_TimerInit();
+  BS7_AnimInputInit();
 }
 
 VOID BS7_AnimClose( VOID )
@@ -52,8 +53,10 @@ VOID BS7_AnimCopyFrame( HDC hDC )
 VOID BS7_AnimRender( VOID )
 {
   INT i;
+  CHAR Buf[100];
 
   BS7_TimerResponse();
+  BS7_AnimInputResponse();
 
   for (i = 0; i < BS7_Anim.NumOfUnits; i++)
     BS7_Anim.Units[i]->Response(BS7_Anim.Units[i], &BS7_Anim);
@@ -61,6 +64,11 @@ VOID BS7_AnimRender( VOID )
   BS7_RndStart();
   for (i = 0; i < BS7_Anim.NumOfUnits; i++)
     BS7_Anim.Units[i]->Render(BS7_Anim.Units[i], &BS7_Anim);
+
+  SetBkMode(BS7_Anim.hDC, TRANSPARENT);
+  SetTextColor(BS7_Anim.hDC, RGB(0, 255, 0));
+  TextOut(BS7_Anim.hDC, 30, 30, Buf, sprintf(Buf, "FPS: %lf", BS7_Anim.FPS));
+
   BS7_RndEnd();
 }
 
@@ -70,7 +78,7 @@ VOID BS7_AnimUnitAdd( bs7UNIT *Uni )
     BS7_Anim.Units[BS7_Anim.NumOfUnits++] = Uni, Uni->Init(Uni, &BS7_Anim);
 }
 
-VOID BS7_AnimFlipFullScreen( HWND hWnd )
+VOID BS7_AnimFlipFullScreen( VOID )
 {
   static BOOL IsFullScreen = FALSE;
   static RECT SaveRect;
@@ -81,16 +89,16 @@ VOID BS7_AnimFlipFullScreen( HWND hWnd )
     MONITORINFO mi;
     RECT rc;
 
-    GetWindowRect(hWnd, &SaveRect);
+    GetWindowRect(BS7_Anim.hWnd, &SaveRect);
 
-    hmon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+    hmon = MonitorFromWindow(BS7_Anim.hWnd, MONITOR_DEFAULTTONEAREST);
     mi.cbSize = sizeof(mi);
     GetMonitorInfo(hmon, &mi);
 
     rc = mi.rcMonitor;
-    AdjustWindowRect(&rc, GetWindowLong(hWnd, GWL_STYLE), FALSE);
+    AdjustWindowRect(&rc, GetWindowLong(BS7_Anim.hWnd, GWL_STYLE), FALSE);
  
-    SetWindowPos(hWnd, HWND_TOP,
+    SetWindowPos(BS7_Anim.hWnd, HWND_TOP,
       rc.left, rc.top,
       rc.right - rc.left,
       rc.bottom - rc.top,
@@ -98,7 +106,7 @@ VOID BS7_AnimFlipFullScreen( HWND hWnd )
   }
   else
   {
-    SetWindowPos(hWnd, HWND_TOP,
+    SetWindowPos(BS7_Anim.hWnd, HWND_TOP,
       SaveRect.left, SaveRect.top,
       SaveRect.right - SaveRect.left,
       SaveRect.bottom - SaveRect.top,
