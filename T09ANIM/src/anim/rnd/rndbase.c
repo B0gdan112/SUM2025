@@ -1,7 +1,7 @@
 /* FILE NAME: rndbase.c
  * PURPOSE: 3D math implementation module.
  * PROGRAMMER: BS7
- * DATE: 09.06.2025
+ * DATE: 12.06.2025
  */
 
 #include "rnd.h"
@@ -75,7 +75,27 @@ VOID BS7_RndInit( HWND hWnd )
   BS7_hRndGLRC = hRC;
   wglMakeCurrent(BS7_hRndDC, BS7_hRndGLRC);
 
+#ifndef NDEBUG
+  OutputDebugString(glGetString(GL_VERSION));
+  OutputDebugString("\n");
+  OutputDebugString(glGetString(GL_VENDOR));
+  OutputDebugString("\n");
+  OutputDebugString(glGetString(GL_RENDERER));
+  OutputDebugString("\n");
+ 
+  printf("Version : %s\n", glGetString(GL_VERSION));
+  printf("Vendor  : %s\n", glGetString(GL_VENDOR));
+  printf("Renderer: %s\n", glGetString(GL_RENDERER));
+#endif /* NDEBUG */
+
+#ifndef NDEBUG
+  glEnable(GL_DEBUG_OUTPUT);
+  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+  glDebugMessageCallback(glDebugOutput, NULL);
+#endif /* NDEBUG */
+
   wglSwapIntervalEXT(1);
+  glEnable(GL_DEPTH_TEST);
  
   /* Set default render parameters */
   BS7_RndResize(47, 47);

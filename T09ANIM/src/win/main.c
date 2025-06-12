@@ -33,9 +33,31 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   WNDCLASS wc;
   static HWND hWnd;
   MSG msg;
+  CONSOLE_FONT_INFOEX cfi = {0};
+
+  AllocConsole();
+
+  SetConsoleTitle("Console");
+
+  cfi.cbSize = sizeof(CONSOLE_FONT_INFOEX);
+  GetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+  cfi.dwFontSize.Y = 30;
+  cfi.FontWeight = FW_BOLD;
+  SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+
+  freopen("CONOUT$", "w", stdout);
+  system("@chcp 1251 > nul");
+  printf("\x1b[38;2;%d;%d;%dm\x1b[48;2;%d;%d;%dm", 200, 0, 200, 0, 255, 100);
+  printf("!!!!!!!!!\n");
+  printf("Version : %s\n", glGetString(GL_VERSION));
+  printf("Vendor  : %s\n", glGetString(GL_VENDOR));
+  printf("Renderer: %s\n", glGetString(GL_RENDERER));
+  fflush(stdout); 
 
   SetDbgMemHooks();
 
+
+  FreeConsole();
   wc.style = CS_VREDRAW | CS_HREDRAW;
   wc.cbClsExtra = 0;
   wc.cbWndExtra = 0;

@@ -34,10 +34,9 @@ static VOID BS7_UnitRender( bs7UNIT_BALL *Uni, bs7ANIM *Ani )
   MATR p;
 
   p = MatrMulMatr(
-    MatrRotateZ(sin(Ani->Time)),
-    MatrTranslate(VecSet(2, fabs(sin(4 * Ani->Time)) + 2, 4)));
+    MatrRotateZ(3 * Ani->Time),
+    MatrTranslate(VecSet(3, fabs(2 * sin(2 * Ani->Time)) + 2, 4)));
 
-  glColor3f(0.5, 0, 0.32);
   BS7_RndPrimDraw(&Uni->Pr, p);
 } /*End of 'BS7_UnitResponse' function*/
 

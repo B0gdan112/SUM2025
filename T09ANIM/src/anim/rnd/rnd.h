@@ -1,7 +1,7 @@
 /* FILE NAME: rnd.h
  * PURPOSE: 3D math implementation module.
  * PROGRAMMER: BS7
- * DATE: 09.06.2025
+ * DATE: 12.06.2025
  */
 
 #ifndef __rnd_h_
@@ -36,13 +36,22 @@ typedef struct tagbs7VERTEX
   VEC4 C;
 } bs7VERTEX;
 
+typedef enum tagbs7PRIM_TYPE
+{
+  BS7_RND_PRIM_POINTS,   /* Array of points  – GL_POINTS */
+  BS7_RND_PRIM_LINES,    /* Line segments (by 2 points) – GL_LINES */
+  BS7_RND_PRIM_TRIMESH,  /* Triangle mesh - array of triangles – GL_TRIANGLES */
+} bs7PRIM_TYPE;
+
 typedef struct tagbs7PRIM
 {
-  bs7VERTEX *V;
-  INT NumOfV;
-  INT *I;
-  INT NumOfI;
-  MATR Trans;
+  bs7PRIM_TYPE Type; /* Primitive type */
+  INT VA,              /* Vertex array Id */
+    VBuf,            /* Vertex buffer Id */
+    IBuf;            /* Index buffer Id (if 0 - use only vertex buffer) */
+  INT NumOfElements; /* Number of indices/vecrtices */
+  VEC MinBB, MaxBB;  /* Bound box */
+  MATR Trans;   /* Additional transformation matrix */
 } bs7PRIM;
 
 VOID BS7_RndInit( HWND hWnd );
@@ -53,11 +62,33 @@ VOID BS7_RndStart( VOID );
 VOID BS7_RndEnd( VOID );
 VOID BS7_RndProjSet( VOID );
 VOID BS7_RndCamSet( VEC Loc, VEC At, VEC Up );
-BOOL BS7_RndPrimCreate( bs7PRIM *Pr, INT NoofV, INT NoofI );
+VOID BS7_RndPrimCreate( bs7PRIM *Pr, bs7PRIM_TYPE Type, bs7VERTEX *V, INT NoofV, INT *Ind, INT NoofI  );
 VOID BS7_RndPrimFree( bs7PRIM *Pr );
 VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World );
 BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName );
 BOOL BS7_RndPrimCreateSphere( bs7PRIM *Pr, DBL R, INT W, INT H );
 VOID BS7_RndPrimTriMeshAutoNormals( bs7VERTEX *V, INT NumOfV, INT *Ind, INT NumOfI );
+
+/* Debug output function.
+ * ARGUMENTS:
+ *   - source APi or device:
+ *       UINT Source;
+ *   - error type:
+ *       UINT Type;
+ *   - error message id:
+ *       UINT Id, 
+ *   - message severity:
+ *       UINT severity, 
+ *   - message text length:
+ *       INT Length, 
+ *   - message text:
+ *       CHAR *Message, 
+ *   - user addon parameters pointer:
+ *       VOID *UserParam;
+ * RETURNS: None.
+ */
+VOID APIENTRY glDebugOutput( UINT Source, UINT Type, UINT Id, UINT Severity,
+                             INT Length, const CHAR *Message,
+                             const VOID *UserParam );
 
 #endif /* __rnd_h_ */

@@ -7,30 +7,67 @@
 #include "def.h"
 #include "rnd.h"
 
-BOOL BS7_RndPrimCreate( bs7PRIM *Pr, INT NoofV, INT NoofI )
+VOID BS7_RndPrimCreate( bs7PRIM *Pr, bs7PRIM_TYPE Type,
+                        bs7VERTEX *V, INT NoofV, INT *Ind, INT NoofI )
 {
-  INT size;
+  INT size, i;
 
   memset(Pr, 0, sizeof(bs7PRIM));
+  glGenVertexArrays(1, &Pr->VA);
 
-  size = sizeof(bs7VERTEX) * NoofV + sizeof(INT) * NoofI;
+  if (V != NULL && NoofV != 0)
+  {
+    glBindVertexArray(Pr->VA);
+    glGenBuffers(1, &Pr->VBuf);
+    glBindBuffer(GL_ARRAY_BUFFER, Pr->VBuf);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(bs7VERTEX) * NoofV, V, GL_STATIC_DRAW);
 
-  Pr->V = malloc(size);
-  if (Pr->V == NULL)
-    return FALSE;
-  memset(Pr->V, 0, size);
-  Pr->I = (INT *)(Pr->V + NoofV);
+    glVertexAttribPointer(0, 3, GL_FLOAT, FALSE, sizeof(bs7VERTEX),
+                          (VOID *)0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, FALSE, sizeof(bs7VERTEX),
+                          (VOID *)sizeof(VEC));
+    glVertexAttribPointer(2, 3, GL_FLOAT, FALSE, sizeof(bs7VERTEX),
+                          (VOID *)(sizeof(VEC) + sizeof(VEC2)));
+    glVertexAttribPointer(3, 4, GL_FLOAT, FALSE, sizeof(bs7VERTEX),
+                          (VOID *)(sizeof(VEC) * 2 + sizeof(VEC2)));
+     
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
+  
+    glBindVertexArray(0);
 
-  Pr->NumOfV = NoofV;
-  Pr->NumOfI = NoofI;
+    /* Obtain BB */
+    Pr->MinBB = Pr->MaxBB = V[0].P;
+    for (i = 1; i < NoofV; i++)
+    {
+      Pr->MinBB = VecMinVec(Pr->MinBB, V[i].P);
+      Pr->MaxBB = VecMaxVec(Pr->MaxBB, V[i].P);
+    }
+  }
+
+  if (Ind != 0 && NoofI != 0)
+  {
+    glGenBuffers(1, &Pr->IBuf);
+    glBindBuffer(GL_ARRAY_BUFFER, Pr->IBuf);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(INT) * NoofI, Ind, GL_STATIC_DRAW);
+    Pr->NumOfElements = NoofI;
+  }
+  else
+    Pr->NumOfElements = NoofV;
   Pr->Trans = MatrIdentity();
-  return TRUE;
 }
 
 VOID BS7_RndPrimFree( bs7PRIM *Pr )
 {
-  if (Pr->V != NULL)
-    free(Pr->V);
+  glBindVertexArray(Pr->VA);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &Pr->VBuf);
+
+  glBindVertexArray(0);
+  glDeleteVertexArrays(1, &Pr->VA);
   memset(Pr, 0, sizeof(bs7PRIM));
 }
 
@@ -44,39 +81,37 @@ VOID BS7_RndPrimFree( bs7PRIM *Pr )
  */
 VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
 {
-  INT i;
   MATR wvp = MatrMulMatr3(Pr->Trans, World, BS7_RndMatrVP);
-  VEC L = VecNormalize(VecSet(1, 3, 2));
- 
+
   glLoadMatrixf(wvp.A[0]);
- 
-  glBegin(GL_TRIANGLES);
-  for (i = 0; i < Pr->NumOfI; i++)
+
+  glBindVertexArray(Pr->VA);
+  if (Pr->IBuf != 0)
   {
-    FLT nl = VecDotVec(L, Pr->V[Pr->I[i]].N);
-    VEC Color = VecMulNum(VecSet(0.8, 0.47, 0.30), nl < 0.1 ? 0.1 : nl);
- 
-    glColor3fv(&Color.X);
-    glVertex3fv(&Pr->V[Pr->I[i]].P.X);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Pr->IBuf);
+    glDrawElements(GL_TRIANGLES, Pr->NumOfElements, GL_UNSIGNED_INT, NULL);
   }
-  glEnd();
+  else
+    glDrawArrays(GL_TRIANGLES, 0, Pr->VBuf);
+  glBindVertexArray(0);
 } /* End of 'BS7_RndPrimDraw' function */
 
-BOOL BS7_RndPrimCreateSphere( bs7PRIM *Pr, DBL R, INT W, INT H )
+/*BOOL BS7_RndPrimCreateSphere( bs7PRIM *Pr, DBL R, INT W, INT H )
 {
   INT i, j, k;
   DBL tetha, phi;
+  INT vn = W * H, fn = (W - 1) * 2 * (H - 1) * 3
 
   memset(Pr, 0, sizeof(bs7PRIM));
-  if (!BS7_RndPrimCreate(Pr, W * H, (W - 1) * 2 * (H - 1) * 3))
+  if (!BS7_RndPrimCreate(Pr, BS7_RND_PRIM_TRIMESH, V, vn, I, fn))
     return FALSE;
 
   for (k = 0, i = 0, tetha = 0.0f; i < H; i++, tetha += PI / (H - 1))
     for (j = 0, phi = 0.0f; j < W; j++, phi += 2 * PI / (W - 1))
     {
-      Pr->V[k].P.X = R * sin(tetha) * sin(phi);
-      Pr->V[k].P.Y = R * cos(tetha);
-      Pr->V[k].P.Z = R * sin(tetha) * cos(phi);
+      Pr->VA[k].P.X = R * sin(tetha) * sin(phi);
+      Pr->VA[k].P.Y = R * cos(tetha);
+      Pr->VA[k].P.Z = R * sin(tetha) * cos(phi);
 
       k++;
     }
@@ -84,9 +119,9 @@ BOOL BS7_RndPrimCreateSphere( bs7PRIM *Pr, DBL R, INT W, INT H )
   for (k = 0, i = 0; i < H - 1; i++)
     for (j = 0; j < W - 1; j++)
     {
-      Pr->I[k++] = i * W + j;
-      Pr->I[k++] = i * W + j + 1;
-      Pr->I[k++] = (i + 1) * W + j;
+      Pr->IBuf[k++] = i * W + j;
+      Pr->IBuf[k++] = i * W + j + 1;
+      Pr->IBuf[k++] = (i + 1) * W + j;
     }
 
   return TRUE;
@@ -95,7 +130,9 @@ BOOL BS7_RndPrimCreateSphere( bs7PRIM *Pr, DBL R, INT W, INT H )
 BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName )
 {
   FILE *F;
-  INT vn = 0, fn = 0;
+  INT vn = 0, fn = 0, size;
+  bs7VERTEX *V;
+  INT *I;
   CHAR Buf[1000];
  
   memset(Pr, 0, sizeof(bs7PRIM));
@@ -120,13 +157,15 @@ BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName )
       fn += n - 2;
     }
   }
- 
-  if (!BS7_RndPrimCreate(Pr, vn, fn * 3))
+
+  size = sizeof(bs7VERTEX) * vn + sizeof(INT) * fn * 3;
+  if ((V = malloc(size)) == NULL)
   {
     fclose(F);
     return FALSE;
   }
- 
+  I = (INT *)(V + vn);
+
   /* Read geometry */
   rewind(F);
   vn = 0;
@@ -138,7 +177,8 @@ BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName )
       DBL x, y, z;
  
       sscanf(Buf + 2, "%lf%lf%lf", &x, &y, &z);
-      Pr->V[vn++].P = VecSet(x, y, z);
+      V[vn].C = Vec4Set(0.5, 0.0, 0.32, 1);
+      V[vn++].P = VecSet(x, y, z);
     }
     else if (Buf[0] == 'f' && Buf[1] == ' ')
     {
@@ -161,9 +201,9 @@ BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName )
           else
           {
             c2 = c;
-            Pr->I[fn++] = c0;
-            Pr->I[fn++] = c1;
-            Pr->I[fn++] = c2;
+            I[fn++] = c0;
+            I[fn++] = c1;
+            I[fn++] = c2;
             c1 = c2;
           }
           n++;
@@ -172,8 +212,10 @@ BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName )
       }
     }
   }
-  BS7_RndPrimTriMeshAutoNormals(Pr->V, vn, Pr->I, fn);
   fclose(F);
+  BS7_RndPrimTriMeshAutoNormals(V, vn, I, fn);
+  BS7_RndPrimCreate(Pr, BS7_RND_PRIM_TRIMESH, V, vn, I, fn);
+  free(V);
   return TRUE;
 } /* End of 'BS7_RndPrimCreateSphere' function */
 
@@ -205,7 +247,7 @@ VOID BS7_RndPrimTriMeshAutoNormals( bs7VERTEX *V, INT NumOfV, INT *Ind, INT NumO
   {
     FLT nl = VecDotVec(L, V[i].N);
     
-    V[i].C = Vec4SetVec3(VecMulNum(VecSet(0.8, 0.47, 0.30), nl < 0.1 ? 0.1 : nl), 0);
+    V[i].C = Vec4SetVec3(VecMulNum(VecSet(0.5, 0.0, 0.32), nl < 0.1 ? 0.1 : nl), 0);
   }
 } /* End of 'BS7_RndPrimTriMeshAutoNormals' function */
 
