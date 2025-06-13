@@ -27,7 +27,7 @@ static VOID BS7_UnitInit( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
     {
       bs7VERTEX *V = &G.V[i * G.W + j];
 
-      V->P = VecSet(j / (G.W - 1.0) * 50 - 250, 1.0, i / (G.H - 1.0) * 500 - 250);
+      V->P = VecSet(j / (G.W - 1.0) * 50 - 30, -5.0, i / (G.H - 1.0) * 500 -30);
     }
 
   BS7_RndPrimFromGrid(&Uni->Land, &G);

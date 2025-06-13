@@ -56,6 +56,10 @@ VOID BS7_RndPrimCreate( bs7PRIM *Pr, bs7PRIM_TYPE Type,
   }
   else
     Pr->NumOfElements = NoofV;
+
+  Pr->Trans = MatrIdentity();
+
+  Pr->Type = Type;
   Pr->Trans = MatrIdentity();
 }
 
@@ -81,34 +85,44 @@ VOID BS7_RndPrimFree( bs7PRIM *Pr )
  */
 VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
 {
-  MATR
+  INT loc;
+  UINT ProgId = BS7_RndShaders[0].ProgId;
+  MATR 
     w = MatrMulMatr(Pr->Trans, World),
     winv = MatrTranspose(MatrInverse(w)),
-    wvp = MatrMulMatr(w, BS7_RndMatrVP);
-  INT ProgId = BS7_RndShaders[0].ProgId;
-  INT loc;
+    M = MatrMulMatr(w, BS7_RndMatrVP);
+  INT gl_prim_type = Pr->Type == BS7_RND_PRIM_LINES ? GL_LINES :
+                     Pr->Type == BS7_RND_PRIM_TRIMESH ? GL_TRIANGLES :
+                     Pr->Type == BS7_RND_PRIM_TRISTRIP ? GL_TRIANGLE_STRIP :
+                     GL_POINTS;
 
-  /* glLoadMatrixf(wvp.A[0]); */
+  //M = MatrMulMatr(Pr->Trans, MatrMulMatr(World, BS7_RndMatrVP)),
+  //glLoadMatrixf(M.A[0]);
 
   if (ProgId == 0)
     return;
   glUseProgram(ProgId);
-
-  if ((loc = glGetUniformLocation(ProgId, "MatrWVP")) != 1)
-    glUniformMatrix4fv(loc, 1, FALSE, wvp.A[0]);
+  if ((loc = glGetUniformLocation(ProgId, "MatrWVP")) != -1)
+    glUniformMatrix4fv(loc, 1, FALSE, M.A[0]);
   if ((loc = glGetUniformLocation(ProgId, "Time")) != -1)
     glUniform1f(loc, BS7_Anim.Time);
+  if ((loc = glGetUniformLocation(ProgId, "MatrW")) != -1)
+    glUniformMatrix4fv(loc, 1, FALSE, w.A[0]);
+  if ((loc = glGetUniformLocation(ProgId, "MatrWinv")) != -1)
+    glUniformMatrix4fv(loc, 1, FALSE, winv.A[0]);
 
   glBindVertexArray(Pr->VA);
-  if (Pr->IBuf != 0)
+  if (Pr->IBuf == 0)
   {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Pr->IBuf);
-    glDrawElements(GL_TRIANGLES, Pr->NumOfElements, GL_UNSIGNED_INT, NULL);
+    glDrawArrays(gl_prim_type, 0, Pr->NumOfElements);
+    glBindVertexArray(0);
   }
   else
-    glDrawArrays(GL_TRIANGLES, 0, Pr->VBuf);
-  glBindVertexArray(0);
-
+  {
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Pr->IBuf);
+    glDrawElements(gl_prim_type, Pr->NumOfElements, GL_UNSIGNED_INT, NULL);
+    glBindVertexArray(0);
+  }
   glUseProgram(0);
 } /* End of 'BS7_RndPrimDraw' function */
 

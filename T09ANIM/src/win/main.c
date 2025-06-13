@@ -87,6 +87,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
   ShowWindow(hWnd, SW_SHOWNORMAL);
   BS7_AnimUnitAdd(BS7_UnitCreateKuma());
+  BS7_AnimUnitAdd(BS7_UnitCreateGrid());
   BS7_AnimUnitAdd(BS7_UnitCreateInit());
 
   while (TRUE)
