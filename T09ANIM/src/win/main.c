@@ -123,6 +123,7 @@ LRESULT CALLBACK WindowFunc( HWND hWnd, UINT Msg,
   PAINTSTRUCT ps;
   MINMAXINFO *minmax;
   INT BS7_MouseWheel = 0;
+  static BOOL SaveActivity;
 
   switch(Msg)
   {
@@ -140,9 +141,18 @@ LRESULT CALLBACK WindowFunc( HWND hWnd, UINT Msg,
     BS7_AnimResize(LOWORD(lParam), HIWORD(lParam));
     SendMessage(hWnd, WM_TIMER, 1, 0);
     return 0;
+  case WM_ACTIVATE:
+    BS7_Anim.IsActive = LOWORD(wParam) != WA_INACTIVE;
+    return 0;
+  case WM_ENTERSIZEMOVE:
+    SaveActivity = BS7_Anim.IsActive;
+    BS7_Anim.IsActive = FALSE;
+    return 0;
+  case WM_EXITSIZEMOVE:
+    BS7_Anim.IsActive = SaveActivity;
+    return 0;
   case WM_TIMER:
     BS7_AnimRender();
-
     BS7_AnimCopyFrame();
     return 0;
   case WM_MOUSEWHEEL:
@@ -152,6 +162,7 @@ LRESULT CALLBACK WindowFunc( HWND hWnd, UINT Msg,
     return 1;
   case WM_PAINT:
     hDC = BeginPaint(hWnd, &ps);
+    BS7_AnimRender();
     BS7_AnimCopyFrame();
     EndPaint(hWnd, &ps);
     return 0;

@@ -96,14 +96,19 @@ VOID BS7_RndInit( HWND hWnd )
 
   wglSwapIntervalEXT(1);
   glEnable(GL_DEPTH_TEST);
- 
+  glEnable(GL_PRIMITIVE_RESTART);
+  glPrimitiveRestartIndex(-1);
+
   /* Set default render parameters */
   BS7_RndResize(47, 47);
-  BS7_RndCamSet(VecSet1(8), VecSet1(0), VecSet(0, 1, 0));
+  BS7_RndCamSet(VecSet1(8), VecSet1(1), VecSet(0, 1, 0));
+
+  BS7_RndResInit();
 }
 
 VOID BS7_RndClose( VOID )
 {
+  BS7_RndResClose();
   wglMakeCurrent(NULL, NULL);
   wglDeleteContext(BS7_hRndGLRC);
   ReleaseDC(BS7_hRndWnd, BS7_hRndDC);
@@ -128,6 +133,8 @@ VOID BS7_RndStart( VOID )
 {
   FLT ClearColor[4] = {0.30, 0.47, 0.8, 1};
   FLT DepthClearValue = 1;
+
+  BS7_RndShdUpdate();
  
   /* Clear frame */
   glClearBufferfv(GL_COLOR, 0, ClearColor);

@@ -11,7 +11,8 @@
 #include <glew.h>
 
 #include <string.h>
-#include "def.h"
+#include "res/rndres.h"
+#include "anim/anim.h"
 
 extern HWND BS7_hRndWnd;
 extern HDC BS7_hRndDC;   /* Work window device context */
@@ -40,13 +41,14 @@ typedef enum tagbs7PRIM_TYPE
 {
   BS7_RND_PRIM_POINTS,   /* Array of points  – GL_POINTS */
   BS7_RND_PRIM_LINES,    /* Line segments (by 2 points) – GL_LINES */
-  BS7_RND_PRIM_TRIMESH,  /* Triangle mesh - array of triangles – GL_TRIANGLES */
+  BS7_RND_PRIM_TRIMESH,
+  BS7_RND_PRIM_TRISTRIP  /* Triangle mesh - array of triangles – GL_TRIANGLES */
 } bs7PRIM_TYPE;
 
 typedef struct tagbs7PRIM
 {
   bs7PRIM_TYPE Type; /* Primitive type */
-  INT VA,              /* Vertex array Id */
+  UINT VA,              /* Vertex array Id */
     VBuf,            /* Vertex buffer Id */
     IBuf;            /* Index buffer Id (if 0 - use only vertex buffer) */
   INT NumOfElements; /* Number of indices/vecrtices */
@@ -90,5 +92,62 @@ VOID BS7_RndPrimTriMeshAutoNormals( bs7VERTEX *V, INT NumOfV, INT *Ind, INT NumO
 VOID APIENTRY glDebugOutput( UINT Source, UINT Type, UINT Id, UINT Severity,
                              INT Length, const CHAR *Message,
                              const VOID *UserParam );
+
+/* Grid topology representation type */
+typedef struct tagbs7GRID
+{
+  INT W, H;      /* Grid size (in vertices) */
+  bs7VERTEX *V;  /* Array (2D) of vertex */
+} bs7GRID;
+ 
+/* Create grid function.
+ * ARGUMENTS:
+ *   - grid data:
+ *       BS7GRID *G;
+ *   - grid size:
+ *       INT W, H;
+ * RETURNS:
+ *   (BOOL) TRUE if success, FALSE otherwise.
+ */
+BOOL BS7_RndGridCreate( bs7GRID *G, INT W, INT H );
+ 
+/* Free grid function.
+ * ARGUMENTS:
+ *   - grid data:
+ *       BS7GRID *G;
+ * RETURNS: None.
+ */
+VOID BS7_RndGridFree( bs7GRID *G );
+ 
+/* Create primitive from grid function.
+ * ARGUMENTS:
+ *   - primitive to be create:
+ *       BS7PRIM *Pr;
+ *   - grid data:
+ *       BS7GRID *G;
+ * RETURNS: None.
+ */
+VOID BS7_RndPrimFromGrid( bs7PRIM *Pr, bs7GRID *G );
+ 
+/* Build grid normals function.
+ * ARGUMENTS:
+ *   - grid data:
+ *       BS7GRID *G;
+ * RETURNS: None.
+ */
+VOID BS7_RndGridAutoNormals( bs7GRID *G );
+ 
+/* Create sphere grid function.
+ * ARGUMENTS:
+ *   - grid data:
+ *       BS7GRID *G;
+ *   - sphere radius:
+ *       FLT R;
+ *   - grid size:
+ *       INT W, H;
+ * RETURNS:
+ *   (BOOL) TRUE if success, FALSE otherwise.
+ */
+BOOL BS7_RndGridCreateSphere( bs7GRID *G, FLT R, INT W, INT H );
 
 #endif /* __rnd_h_ */

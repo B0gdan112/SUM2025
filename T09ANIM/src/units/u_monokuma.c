@@ -32,10 +32,11 @@ static VOID BS7_UnitResponse( bs7UNIT_BALL *Uni, bs7ANIM *Ani )
 static VOID BS7_UnitRender( bs7UNIT_BALL *Uni, bs7ANIM *Ani )
 {
   MATR p;
-
-  p = MatrMulMatr(
-    MatrRotateZ(3 * Ani->Time),
-    MatrTranslate(VecSet(3, fabs(2 * sin(2 * Ani->Time)) + 2, 4)));
+  
+  p = MatrIdentity();
+  p = MatrMulMatr(p, MatrRotateZ(3 * Ani->Time));
+  p = MatrMulMatr(p, MatrTranslate(VecSet(Uni->Pos.X, Uni->Pos.Y + fabs(2 * sin(2 * Ani->Time)) - 2, Uni->Pos.Z)));
+  p = MatrMulMatr(p, MatrScale(VecSet1(3)));
 
   BS7_RndPrimDraw(&Uni->Pr, p);
 } /*End of 'BS7_UnitResponse' function*/

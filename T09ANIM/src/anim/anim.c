@@ -55,7 +55,8 @@ VOID BS7_AnimRender( VOID )
   INT i;
 
   BS7_TimerResponse();
-  BS7_AnimInputResponse();
+  if (BS7_Anim.IsActive)
+    BS7_AnimInputResponse();
 
   for (i = 0; i < BS7_Anim.NumOfUnits; i++)
     BS7_Anim.Units[i]->Response(BS7_Anim.Units[i], &BS7_Anim);

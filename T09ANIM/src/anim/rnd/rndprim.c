@@ -10,7 +10,7 @@
 VOID BS7_RndPrimCreate( bs7PRIM *Pr, bs7PRIM_TYPE Type,
                         bs7VERTEX *V, INT NoofV, INT *Ind, INT NoofI )
 {
-  INT size, i;
+  INT i;
 
   memset(Pr, 0, sizeof(bs7PRIM));
   glGenVertexArrays(1, &Pr->VA);
@@ -81,9 +81,23 @@ VOID BS7_RndPrimFree( bs7PRIM *Pr )
  */
 VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
 {
-  MATR wvp = MatrMulMatr3(Pr->Trans, World, BS7_RndMatrVP);
+  MATR
+    w = MatrMulMatr(Pr->Trans, World),
+    winv = MatrTranspose(MatrInverse(w)),
+    wvp = MatrMulMatr(w, BS7_RndMatrVP);
+  INT ProgId = BS7_RndShaders[0].ProgId;
+  INT loc;
 
-  glLoadMatrixf(wvp.A[0]);
+  /* glLoadMatrixf(wvp.A[0]); */
+
+  if (ProgId == 0)
+    return;
+  glUseProgram(ProgId);
+
+  if ((loc = glGetUniformLocation(ProgId, "MatrWVP")) != 1)
+    glUniformMatrix4fv(loc, 1, FALSE, wvp.A[0]);
+  if ((loc = glGetUniformLocation(ProgId, "Time")) != -1)
+    glUniform1f(loc, BS7_Anim.Time);
 
   glBindVertexArray(Pr->VA);
   if (Pr->IBuf != 0)
@@ -94,6 +108,8 @@ VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
   else
     glDrawArrays(GL_TRIANGLES, 0, Pr->VBuf);
   glBindVertexArray(0);
+
+  glUseProgram(0);
 } /* End of 'BS7_RndPrimDraw' function */
 
 /*BOOL BS7_RndPrimCreateSphere( bs7PRIM *Pr, DBL R, INT W, INT H )

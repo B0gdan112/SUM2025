@@ -30,6 +30,7 @@ typedef struct tagbs7ANIM
   HWND hWnd;
   HDC hDC;
   INT W, H;
+  BOOL IsActive;
 
   bs7UNIT *Units[BS7_MAX_UNITS];
   INT NumOfUnits;

@@ -9,6 +9,8 @@
 #define BS7_GET_JOYSTIC_AXIS(A) \
   (2.0 * (ji.dw ## A ## pos - jc.w ## A ## min) / (jc.w ## A ## max - jc.w ## A ## min) – 1)
 
+INT BS7_MouseWheel;
+
 static VOID BS7_AnimKeyboardInit( VOID )
 {
   INT i;
@@ -36,22 +38,15 @@ static VOID BS7_AnimKeyboardResponse( VOID )
 
 static VOID BS7_AnimMouseInit( VOID )
 {
-  INT BS7_MouseWheel = 0;
-
-  BS7_Anim.Mdx = 0;
-  BS7_Anim.Mdy = 0;
-
   BS7_Anim.Mx = 0;
   BS7_Anim.My = 0;
-
-  BS7_Anim.Mdz = 0;
   BS7_Anim.Mz = 0;
+  BS7_MouseWheel = 0;
 }
 
 static VOID BS7_AnimMouseResponse( VOID )
 {
   POINT pt;
-  INT BS7_MouseWheel = 0;
 
   GetCursorPos(&pt);
   ScreenToClient(BS7_Anim.hWnd, &pt);
