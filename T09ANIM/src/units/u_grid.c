@@ -20,7 +20,7 @@ static VOID BS7_UnitInit( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
   INT i, j;
   bs7GRID G;
 
-  BS7_RndGridCreate(&G, 300, 100);
+  BS7_RndGridCreate(&G, 200, 200);
 
   for (i = 0; i < G.H; i++)
     for (j = 0; j < G.W; j++)

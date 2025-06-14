@@ -29,6 +29,8 @@ extern MATR
   BS7_RndMatrProj, /* Projection coordinate system matrix */
   BS7_RndMatrVP;   /* Stored (View * Proj) matrix */
 
+extern VEC BS7_RndCamLoc;
+
 typedef struct tagbs7VERTEX
 {
   VEC P;
@@ -53,7 +55,8 @@ typedef struct tagbs7PRIM
     IBuf;            /* Index buffer Id (if 0 - use only vertex buffer) */
   INT NumOfElements; /* Number of indices/vecrtices */
   VEC MinBB, MaxBB;  /* Bound box */
-  MATR Trans;   /* Additional transformation matrix */
+  MATR Trans;        /* Additional transformation matrix */
+  INT MtlNo;         /* Material number in material array */
 } bs7PRIM;
 
 VOID BS7_RndInit( HWND hWnd );

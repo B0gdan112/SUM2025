@@ -68,6 +68,35 @@ static VOID BS7_AnimJoystickInit( VOID )
 
 static VOID BS7_AnimJoystickResponse( VOID )
 {
+  /*INT i;
+
+  if (joyGetNumDevs() > 0)
+  {
+    JOYCAPS jc;
+
+    if (joyGetDevCaps(JOYSTICKID1, &jc, sizeof(jc)) == JOYERR_NOERROR)
+    {
+      JOYINFOEX ji;
+
+      ji.dwSize = sizeof(JOYINFOEX);
+      ji.dwFlags = JOY_RETURNALL;
+      if (joyGetPosEx(JOYSTICKID1, &ji) == JOYERR_NOERROR)
+      {
+
+        for (i = 0; i < 32; i++)
+        {
+          BS7_Anim.JBut[i] = (ji.dwButtons >> i) & 1;
+          JButClick[i] = BS7_Anim.JBut[i] && !BS7_Anim.JButOld[i];
+          JButOld[i] = BS7_Anim.JBut[i];
+        }
+
+        BS7_Anim.JX = BS7_GET_JOYSTIC_AXIS(X);
+        BS7_Anim.JY = BS7_GET_JOYSTIC_AXIS(Y);
+        BS7_Anim.JZ = BS7_GET_JOYSTIC_AXIS(Z);
+        BS7_Anim.JR = BS7_GET_JOYSTIC_AXIS(R);
+      }
+    }
+  }*/
 }
 
 VOID BS7_AnimInputInit( VOID )

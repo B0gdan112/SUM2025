@@ -31,14 +31,19 @@ static VOID BS7_UnitClose( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
 
 static VOID BS7_UnitResponse( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
 {
-  Uni->CamLoc =
+  /*Uni->CamLoc =
     VecAddVec(Uni->CamLoc,
-       VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Ani->Mdz * 10));
+       VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Ani->Mdz * 10));*/
+
+  Uni->CamLoc =
+    PointTransform(Uni->CamLoc,
+      MatrRotateZ(Ani->Keys[VK_LBUTTON] *
+                  Ani->DeltaTime * -Ani->Mdx * 2));
 
   Uni->CamLoc =
     PointTransform(Uni->CamLoc,
       MatrRotateY(Ani->Keys[VK_LBUTTON] *
-                  Ani->DeltaTime * Ani->Mdx * 2));
+                  Ani->DeltaTime * Ani->Mdy * 2));
 
    Uni->CamLoc =
     VecAddVec(Uni->CamLoc,

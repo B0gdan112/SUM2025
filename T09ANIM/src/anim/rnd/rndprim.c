@@ -89,18 +89,16 @@ VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
   UINT ProgId = BS7_RndShaders[0].ProgId;
   MATR 
     w = MatrMulMatr(Pr->Trans, World),
-    winv = MatrTranspose(MatrInverse(w)),
+    WInv = MatrTranspose(MatrInverse(w)),
     M = MatrMulMatr(w, BS7_RndMatrVP);
   INT gl_prim_type = Pr->Type == BS7_RND_PRIM_LINES ? GL_LINES :
                      Pr->Type == BS7_RND_PRIM_TRIMESH ? GL_TRIANGLES :
                      Pr->Type == BS7_RND_PRIM_TRISTRIP ? GL_TRIANGLE_STRIP :
                      GL_POINTS;
 
-  //M = MatrMulMatr(Pr->Trans, MatrMulMatr(World, BS7_RndMatrVP)),
-  //glLoadMatrixf(M.A[0]);
-
-  if (ProgId == 0)
+  if ((ProgId = BS7_RndMtlApply(Pr->MtlNo)) == 0)
     return;
+
   glUseProgram(ProgId);
   if ((loc = glGetUniformLocation(ProgId, "MatrWVP")) != -1)
     glUniformMatrix4fv(loc, 1, FALSE, M.A[0]);
@@ -108,8 +106,10 @@ VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
     glUniform1f(loc, BS7_Anim.Time);
   if ((loc = glGetUniformLocation(ProgId, "MatrW")) != -1)
     glUniformMatrix4fv(loc, 1, FALSE, w.A[0]);
-  if ((loc = glGetUniformLocation(ProgId, "MatrWinv")) != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, winv.A[0]);
+  if ((loc = glGetUniformLocation(ProgId, "MatrWInv")) != -1)
+    glUniformMatrix4fv(loc, 1, FALSE, WInv.A[0]);
+   if ((loc = glGetUniformLocation(ProgId, "CamLoc")) != -1)
+    glUniform3fv(loc, 1, &BS7_RndCamLoc.X);
 
   glBindVertexArray(Pr->VA);
   if (Pr->IBuf == 0)
@@ -255,7 +255,7 @@ VOID BS7_RndPrimTriMeshAutoNormals( bs7VERTEX *V, INT NumOfV, INT *Ind, INT NumO
   VEC L = VecNormalize(VecSet(1, 3, 2));
 
   for (i = 0; i < NumOfV; i++)
-    V[i].N = VecSet1(0);
+     V[i].N = VecSet1(0);
 
   for (i = 0; i < NumOfI; i += 3)
   {
@@ -269,10 +269,10 @@ VOID BS7_RndPrimTriMeshAutoNormals( bs7VERTEX *V, INT NumOfV, INT *Ind, INT NumO
     P1->N = VecAddVec(P1->N, N);
     P2->N = VecAddVec(P2->N, N);
   }
- 
+
   for (i = 0; i < NumOfV; i++)
-    V[i].N = VecNormalize(V[i].N);
- 
+     V[i].N = VecNormalize(V[i].N);
+
   for (i = 0; i < NumOfV; i++)
   {
     FLT nl = VecDotVec(L, V[i].N);

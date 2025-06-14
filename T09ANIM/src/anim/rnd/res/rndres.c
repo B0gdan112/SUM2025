@@ -9,9 +9,13 @@
 VOID BS7_RndResInit( VOID )
 {
   BS7_RndShdInit();
+  BS7_RndTexInit();
+  BS7_RndMtlInit();
 }
 
 VOID BS7_RndResClose( VOID )
 {
+  BS7_RndMtlClose();
+  BS7_RndTexClose();
   BS7_RndShdClose();
 }

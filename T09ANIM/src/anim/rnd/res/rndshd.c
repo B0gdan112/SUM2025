@@ -1,4 +1,4 @@
-/* FILE NAME: rndres.h
+/* FILE NAME: rndres.c
  * PURPOSE: 3D animation project.
  * PROGRAMMER: BS7
  * DATE: 13.06.2025
@@ -39,7 +39,7 @@ static VOID BS7_RndShdLog( CHAR *FileNamePrefix, CHAR *Part, CHAR *Text )
 {
   FILE *F;
 
-  if ((F = fopen("bin/shaders/default/BS7{30}Shd.log", "a")) == NULL)
+  if ((F = fopen("bin/shaders/BS7{30}Shd.log", "a")) == NULL)
     return;
   fprintf(F, "%s%s\n%s\n", FileNamePrefix, Part, Text);
   printf("\x1b[38;2;%255;%100;%100mSHDLOG: %s%s\n%s\n\x1b[38;2;%255;%255;%255m", FileNamePrefix, Part, Text);
@@ -217,6 +217,6 @@ VOID BS7_RndShdUpdate( VOID )
       BS7_RndShdFree(BS7_RndShaders[i].ProgId);
       BS7_RndShaders[i].ProgId = BS7_RndShdLoad(BS7_RndShaders[i].Name);
     }
+    OldTime = t;
   }
-  OldTime = t;
 }

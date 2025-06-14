@@ -130,7 +130,7 @@ LRESULT CALLBACK WindowFunc( HWND hWnd, UINT Msg,
   {
   case WM_GETMINMAXINFO:
     minmax = (MINMAXINFO *)lParam;
-    minmax->ptMinTrackSize.y += 100;
+    minmax->ptMinTrackSize.y = 100;
     minmax->ptMaxTrackSize.y = GetSystemMetrics(SM_CYMAXTRACK) +
       GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYBORDER) * 2;
     return 0; 
