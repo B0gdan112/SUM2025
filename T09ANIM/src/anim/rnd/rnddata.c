@@ -21,4 +21,4 @@ MATR
   BS7_RndMatrProj, /* Projection coordinate system matrix */
   BS7_RndMatrVP;   /* Stored (View * Proj) matrix */
 
-VEC BS7_RndCamLoc;
+VEC BS7_RndCamLoc, BS7_RndCamAt, BS7_RndCamDir, BS7_RndCamRight, BS7_RndCamUp;

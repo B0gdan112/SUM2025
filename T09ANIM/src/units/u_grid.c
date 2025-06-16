@@ -17,21 +17,40 @@ typedef struct
 
 static VOID BS7_UnitInit( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
 {
-  INT i, j;
+  HBITMAP hBm;
+  BITMAP bm;
   bs7GRID G;
+  INT w, h;
+  INT x, y;
 
-  BS7_RndGridCreate(&G, 200, 200);
+  if ((hBm = LoadImage(NULL, "bin/heights/hf.bmp", IMAGE_BITMAP, 0, 0,
+                       LR_LOADFROMFILE | LR_CREATEDIBSECTION)) != NULL)
+  {
+    GetObject(hBm, sizeof(bm), &bm);
 
-  for (i = 0; i < G.H; i++)
-    for (j = 0; j < G.W; j++)
+    w = bm.bmWidth;
+    h = bm.bmHeight;
+
+    BS7_RndTexAddFromFile("bin/textures/hfcolor.bmp");
+
+    if (bm.bmBitsPixel == 8 && BS7_RndGridCreate(&G, w, h) != 0)
     {
-      bs7VERTEX *V = &G.V[i * G.W + j];
-
-      V->P = VecSet(j / (G.W - 1.0) * 50 - 30, -5.0, i / (G.H - 1.0) * 500 -30);
+      BYTE *Bits = bm.bmBits;
+ 
+      for (y = 0; y < h; y++)
+        for (x = 0; x < w; x++)
+        {
+          INT hgt = Bits[(h - 1 - y) * bm.bmWidthBytes + x];
+ 
+          G.V[y * w + x].P = VecSet(x / (w - 1.0), hgt / 255.0, 1 - y / (h - 1.0));
+        }
+      BS7_RndGridAutoNormals(&G);
+      BS7_RndPrimFromGrid(&Uni->Land, &G);
+      BS7_RndGridFree(&G);
     }
 
-  BS7_RndPrimFromGrid(&Uni->Land, &G);
-  BS7_RndGridFree(&G);
+    DeleteObject(hBm);
+  }
 } /*End of 'BS7_UnitInit' function*/
 
 static VOID BS7_UnitClose( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
@@ -45,7 +64,7 @@ static VOID BS7_UnitResponse( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
 
 static VOID BS7_UnitRender( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
 {
-  BS7_RndPrimDraw(&Uni->Land, MatrIdentity());
+  BS7_RndPrimDraw(&Uni->Land, MatrMulMatr(MatrScale(VecSet1(100)), MatrTranslate(VecSet(-50, -12, -50))));
 } /*End of 'BS7_UnitResponse' function*/
 
 bs7UNIT * BS7_UnitCreateGrid( VOID )

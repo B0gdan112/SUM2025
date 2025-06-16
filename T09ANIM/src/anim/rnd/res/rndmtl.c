@@ -1,5 +1,5 @@
 /* FILE NAME: rndmtl.c
- * PURPOSE: 3D animation project.
+ * PURPOSE: materials.
  * PROGRAMMER: BS7
  * DATE: 14.06.2025
  */
@@ -25,7 +25,7 @@ bs7MATERIAL BS7_RndMtlGetDef( VOID )
  
   return def_mtl;
 }
- 
+
 VOID BS7_RndMtlInit( VOID )
 {
   bs7MATERIAL def = BS7_RndMtlGetDef();
@@ -33,15 +33,23 @@ VOID BS7_RndMtlInit( VOID )
   BS7_RndMaterialsSize = 0;
   BS7_RndMtlAdd(&def);
 }
+
 VOID BS7_RndMtlClose( VOID )
 {
-  INT i;
+  bs7MATERIAL def = {
+    "Default",
+    {0.0, 0.0, 0.0},
+    {0.0, 0.0, 0.0},
+    {0.0, 0.0, 0.0},
+    0, 1,
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    0
+  };
 
-  for (i = 0; i < BS7_RndMaterialsSize; i++)
-    BS7_RndShdFree(BS7_RndMaterials[i].ProgId);
-  BS7_RndShadersSize = 0;
+  BS7_RndMtlAdd(&def);
+  BS7_RndMaterialsSize = 0;
 }
- 
+
 INT BS7_RndMtlAdd( bs7MATERIAL *Mtl )
 {
   if (BS7_RndMaterialsSize >= BS7_MAX_MATERIALS)
@@ -49,7 +57,7 @@ INT BS7_RndMtlAdd( bs7MATERIAL *Mtl )
   BS7_RndMaterials[BS7_RndMaterialsSize] = *Mtl;
   return BS7_RndMaterialsSize++;
 }
- 
+
 UINT BS7_RndMtlApply( INT MtlNo )
 {
   INT prg;

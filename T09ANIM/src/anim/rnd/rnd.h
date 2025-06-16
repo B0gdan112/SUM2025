@@ -29,7 +29,7 @@ extern MATR
   BS7_RndMatrProj, /* Projection coordinate system matrix */
   BS7_RndMatrVP;   /* Stored (View * Proj) matrix */
 
-extern VEC BS7_RndCamLoc;
+extern VEC BS7_RndCamLoc, BS7_RndCamAt, BS7_RndCamDir, BS7_RndCamRight, BS7_RndCamUp;
 
 typedef struct tagbs7VERTEX
 {
@@ -41,10 +41,10 @@ typedef struct tagbs7VERTEX
 
 typedef enum tagbs7PRIM_TYPE
 {
-  BS7_RND_PRIM_POINTS,   /* Array of points  – GL_POINTS */
-  BS7_RND_PRIM_LINES,    /* Line segments (by 2 points) – GL_LINES */
+  BS7_RND_PRIM_POINTS,   /* Array of points  - GL_POINTS */
+  BS7_RND_PRIM_LINES,    /* Line segments (by 2 points) - GL_LINES */
   BS7_RND_PRIM_TRIMESH,
-  BS7_RND_PRIM_TRISTRIP  /* Triangle mesh - array of triangles – GL_TRIANGLES */
+  BS7_RND_PRIM_TRISTRIP  /* Triangle mesh - array of triangles - GL_TRIANGLES */
 } bs7PRIM_TYPE;
 
 typedef struct tagbs7PRIM

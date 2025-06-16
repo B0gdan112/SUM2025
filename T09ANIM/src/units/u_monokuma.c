@@ -34,7 +34,7 @@ static VOID BS7_UnitRender( bs7UNIT_BALL *Uni, bs7ANIM *Ani )
   MATR p;
   
   p = MatrIdentity();
-  p = MatrMulMatr(p, MatrRotateZ(3 * Ani->Time));
+  p = MatrMulMatr(p, MatrRotateY(100 * Ani->Time));
   p = MatrMulMatr(p, MatrTranslate(VecSet(Uni->Pos.X, Uni->Pos.Y + fabs(2 * sin(2 * Ani->Time)) - 2, Uni->Pos.Z)));
   p = MatrMulMatr(p, MatrScale(VecSet1(3)));
 

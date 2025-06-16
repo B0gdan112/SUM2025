@@ -7,20 +7,12 @@
 #include "anim/anim.h"
 
 #define BS7_GET_JOYSTIC_AXIS(A) \
-  (2.0 * (ji.dw ## A ## pos - jc.w ## A ## min) / (jc.w ## A ## max - jc.w ## A ## min) – 1)
+  (2.0 * (ji.dw ## A ## pos - jc.w ## A ## min) / (jc.w ## A ## max - jc.w ## A ## min) - 1)
 
 INT BS7_MouseWheel;
 
 static VOID BS7_AnimKeyboardInit( VOID )
 {
-  INT i;
-
-  for (i = 0; i < 256; i++)
-  {
-    BS7_Anim.Keys[i] >>= 7;
-    BS7_Anim.KeysClick[i] = BS7_Anim.Keys[i] && !BS7_Anim.KeysOld[i];
-  }
-  memcpy(BS7_Anim.KeysOld, BS7_Anim.Keys, 256);
 }
 
 static VOID BS7_AnimKeyboardResponse( VOID )
@@ -68,7 +60,7 @@ static VOID BS7_AnimJoystickInit( VOID )
 
 static VOID BS7_AnimJoystickResponse( VOID )
 {
-  /*INT i;
+  INT i;
 
   if (joyGetNumDevs() > 0)
   {
@@ -82,12 +74,11 @@ static VOID BS7_AnimJoystickResponse( VOID )
       ji.dwFlags = JOY_RETURNALL;
       if (joyGetPosEx(JOYSTICKID1, &ji) == JOYERR_NOERROR)
       {
-
         for (i = 0; i < 32; i++)
         {
           BS7_Anim.JBut[i] = (ji.dwButtons >> i) & 1;
-          JButClick[i] = BS7_Anim.JBut[i] && !BS7_Anim.JButOld[i];
-          JButOld[i] = BS7_Anim.JBut[i];
+          BS7_Anim.JButClick[i] = BS7_Anim.JBut[i] && !BS7_Anim.JButOld[i];
+          BS7_Anim.JButOld[i] = BS7_Anim.JBut[i];
         }
 
         BS7_Anim.JX = BS7_GET_JOYSTIC_AXIS(X);
@@ -96,7 +87,7 @@ static VOID BS7_AnimJoystickResponse( VOID )
         BS7_Anim.JR = BS7_GET_JOYSTIC_AXIS(R);
       }
     }
-  }*/
+  }
 }
 
 VOID BS7_AnimInputInit( VOID )

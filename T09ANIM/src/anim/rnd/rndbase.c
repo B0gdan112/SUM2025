@@ -99,6 +99,9 @@ VOID BS7_RndInit( HWND hWnd )
   glEnable(GL_PRIMITIVE_RESTART);
   glPrimitiveRestartIndex(-1);
 
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
   /* Set default render parameters */
   BS7_RndResize(47, 47);
   BS7_RndCamSet(VecSet1(8), VecSet1(1), VecSet(0, 1, 0));
@@ -167,4 +170,16 @@ VOID BS7_RndCamSet( VEC Loc, VEC At, VEC Up )
 {
   BS7_RndMatrView = MatrView(Loc, At, Up);
   BS7_RndMatrVP = MatrMulMatr(BS7_RndMatrView, BS7_RndMatrProj);
+
+  BS7_RndCamRight = VecSet(BS7_RndMatrView.A[0][0],
+                           BS7_RndMatrView.A[1][0],
+                           BS7_RndMatrView.A[2][0]);
+  BS7_RndCamUp = VecSet(BS7_RndMatrView.A[0][1],
+                        BS7_RndMatrView.A[1][1],
+                        BS7_RndMatrView.A[2][1]);
+  BS7_RndCamDir = VecSet(-BS7_RndMatrView.A[0][2],
+                         -BS7_RndMatrView.A[1][2],
+                         -BS7_RndMatrView.A[2][2]);
+  BS7_RndCamLoc = Loc;
+  BS7_RndCamAt = At;
 }

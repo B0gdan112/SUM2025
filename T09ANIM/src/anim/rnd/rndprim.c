@@ -95,10 +95,16 @@ VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
                      Pr->Type == BS7_RND_PRIM_TRIMESH ? GL_TRIANGLES :
                      Pr->Type == BS7_RND_PRIM_TRISTRIP ? GL_TRIANGLE_STRIP :
                      GL_POINTS;
+  UINT TexId = BS7_RndTextures[0].TexId;
 
   if ((ProgId = BS7_RndMtlApply(Pr->MtlNo)) == 0)
     return;
-
+  if ((loc = glGetUniformLocation(ProgId, "Tex")) != -1)
+  {
+    glUniform1i(loc, 1);
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, TexId);
+  }
   glUseProgram(ProgId);
   if ((loc = glGetUniformLocation(ProgId, "MatrWVP")) != -1)
     glUniformMatrix4fv(loc, 1, FALSE, M.A[0]);
@@ -108,7 +114,7 @@ VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
     glUniformMatrix4fv(loc, 1, FALSE, w.A[0]);
   if ((loc = glGetUniformLocation(ProgId, "MatrWInv")) != -1)
     glUniformMatrix4fv(loc, 1, FALSE, WInv.A[0]);
-   if ((loc = glGetUniformLocation(ProgId, "CamLoc")) != -1)
+  if ((loc = glGetUniformLocation(ProgId, "CamLoc")) != -1)
     glUniform3fv(loc, 1, &BS7_RndCamLoc.X);
 
   glBindVertexArray(Pr->VA);
@@ -207,7 +213,7 @@ BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName )
       DBL x, y, z;
  
       sscanf(Buf + 2, "%lf%lf%lf", &x, &y, &z);
-      V[vn].C = Vec4Set(0.5, 0.0, 0.32, 1);
+      V[vn].C = Vec4Set(0.0, 0.0, 0.0, 0);
       V[vn++].P = VecSet(x, y, z);
     }
     else if (Buf[0] == 'f' && Buf[1] == ' ')
