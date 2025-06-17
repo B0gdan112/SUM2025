@@ -13,5 +13,6 @@ bs7UNIT * BS7_UnitCreateBall( VOID );
 bs7UNIT * BS7_UnitCreateKuma( VOID );
 bs7UNIT * BS7_UnitCreateInit( VOID );
 bs7UNIT * BS7_UnitCreateGrid( VOID );
+bs7UNIT * BS7_UnitCreateModel( VOID );
 
 #endif /*__units_h_ */

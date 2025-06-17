@@ -302,6 +302,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\units\u_models.c"
+					>
+				</File>
+				<File
 					RelativePath=".\src\units\u_monokuma.c"
 					>
 				</File>

@@ -80,7 +80,7 @@ VOID BS7_RndPrimFromGrid( bs7PRIM *Pr, bs7GRID *G )
  */
 VOID BS7_RndGridAutoNormals( bs7GRID *G )
 {
-  INT i, j;
+   INT i, j;
 
   for (i = 0; i < G->W * G->H; i++)
     G->V[i].N = VecSet(0, 0, 0);

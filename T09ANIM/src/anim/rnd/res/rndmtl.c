@@ -113,3 +113,10 @@ UINT BS7_RndMtlApply( INT MtlNo )
   }
   return prg;
 }
+
+bs7MATERIAL * BS7_RndMtlGet( INT MtlNo )
+{
+  if (MtlNo < 0 || MtlNo >= BS7_RndMaterialsSize)
+    MtlNo = 0;
+  return &BS7_RndMaterials[MtlNo];
+}

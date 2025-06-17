@@ -86,7 +86,7 @@ VOID BS7_RndPrimFree( bs7PRIM *Pr )
 VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
 {
   INT loc;
-  UINT ProgId = BS7_RndShaders[0].ProgId;
+  UINT ProgId;
   MATR 
     w = MatrMulMatr(Pr->Trans, World),
     WInv = MatrTranspose(MatrInverse(w)),
@@ -99,13 +99,6 @@ VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
 
   if ((ProgId = BS7_RndMtlApply(Pr->MtlNo)) == 0)
     return;
-  if ((loc = glGetUniformLocation(ProgId, "Tex")) != -1)
-  {
-    glUniform1i(loc, 1);
-    glActiveTexture(GL_TEXTURE0 + 1);
-    glBindTexture(GL_TEXTURE_2D, TexId);
-  }
-  glUseProgram(ProgId);
   if ((loc = glGetUniformLocation(ProgId, "MatrWVP")) != -1)
     glUniformMatrix4fv(loc, 1, FALSE, M.A[0]);
   if ((loc = glGetUniformLocation(ProgId, "Time")) != -1)
@@ -258,7 +251,7 @@ BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName )
 VOID BS7_RndPrimTriMeshAutoNormals( bs7VERTEX *V, INT NumOfV, INT *Ind, INT NumOfI )
 {
   INT i;
-  VEC L = VecNormalize(VecSet(1, 3, 2));
+  //VEC L = VecNormalize(VecSet(1, 3, 2));
 
   for (i = 0; i < NumOfV; i++)
      V[i].N = VecSet1(0);
@@ -281,9 +274,10 @@ VOID BS7_RndPrimTriMeshAutoNormals( bs7VERTEX *V, INT NumOfV, INT *Ind, INT NumO
 
   for (i = 0; i < NumOfV; i++)
   {
-    FLT nl = VecDotVec(L, V[i].N);
+    //FLT nl = VecDotVec(L, V[i].N);
     
-    V[i].C = Vec4SetVec3(VecMulNum(VecSet(0.5, 0.0, 0.32), nl < 0.1 ? 0.1 : nl), 0);
+    //V[i].C = Vec4SetVec3(VecMulNum(VecSet(0, 0.5, 0), nl < 0.1 ? 0.1 : nl));
+    V[i].C = Vec4SetVec3(VecSet(0, 0.5, 0), 1);
   }
 } /* End of 'BS7_RndPrimTriMeshAutoNormals' function */
 

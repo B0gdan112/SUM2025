@@ -153,4 +153,42 @@ VOID BS7_RndGridAutoNormals( bs7GRID *G );
  */
 BOOL BS7_RndGridCreateSphere( bs7GRID *G, FLT R, INT W, INT H );
 
+typedef struct tagbs7PRIMS
+{
+  INT NumOfPrims; /* Number of primitives in array */  
+  bs7PRIM *Prims; /* Array of primitives */
+  MATR Trans;     /* Common transformation matrix */
+} bs7PRIMS;
+
+BOOL BS7_RndPrimsCreate( bs7PRIMS *Prs, INT NumOfPrims );
+ 
+/* Delete array of primitives function.
+ * ARGUMENTS:
+ *   - pointer to primitives structure:
+ *       BS7PRIMS *Prs;
+ * RETURNS: None.
+ */
+VOID BS7_RndPrimsFree( bs7PRIMS *Prs );
+ 
+/* Draw array of primitives function.
+ * ARGUMENTS:
+ *   - pointer to primitives structure:
+ *       BS7PRIMS *Prs;
+ *   - global transformation matrix:
+ *       MATR World;
+ * RETURNS: None.
+ */
+VOID BS7_RndPrimsDraw( bs7PRIMS *Prs, MATR World );
+
+/* Load primitives from '*.G3DM' file function.
+ * ARGUMENTS:
+ *   - pointer to primitives to create:
+ *       BS7PRIMS *Prs;
+ *   - '*.G3DM' file name:
+ *       CHAR *FileName;
+ * RETURNS:
+ *   (BOOL) TRUE if success, FALSE otherwise.
+ */
+BOOL BS7_RndPrimsLoad( bs7PRIMS *Prs, CHAR *FileName );
+
 #endif /* __rnd_h_ */

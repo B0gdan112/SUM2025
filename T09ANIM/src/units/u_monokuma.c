@@ -15,8 +15,15 @@ typedef struct
 
 static VOID BS7_UnitInit( bs7UNIT_BALL *Uni, bs7ANIM *Ani )
 {
+  bs7MATERIAL mtl;
   Uni->Pos = VecSet1(0);
   BS7_RndPrimLoad(&Uni->Pr, "bin/models/monokuma.obj");
+
+  mtl = BS7_RndMtlGetDef();
+  strcpy(mtl.Name, "Kuma Material");
+  mtl.Tex[0] = BS7_RndTexAddFromFile("bin/textures/chess.bmp");
+  mtl.ShdNo = BS7_RndShdAdd("Default");
+  Uni->Pr.MtlNo = BS7_RndMtlAdd(&mtl);
 } /*End of 'BS7_UnitInit' function*/
 
 static VOID BS7_UnitClose( bs7UNIT_BALL *Uni, bs7ANIM *Ani )
@@ -49,8 +56,8 @@ bs7UNIT * BS7_UnitCreateKuma( VOID )
     return NULL;
 
   Uni->Init = (VOID *)BS7_UnitInit;
-  Uni->Close = (VOID *)BS7_UnitClose;
   Uni->Response = (VOID *)BS7_UnitResponse;
   Uni->Render = (VOID *)BS7_UnitRender;
+  Uni->Close = (VOID *)BS7_UnitClose;
   return Uni;
 } /*End of 'BS7_UnitResponse' function*/

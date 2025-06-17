@@ -26,15 +26,7 @@ static VOID BS7_UnitClose( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
 
 static VOID BS7_UnitResponse( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
 {
-  if (Ani->KeysClick[VK_F11])
-    BS7_AnimFlipFullScreen();
-  if (Ani->KeysClick['P'])
-    Ani->IsPause = !Ani->IsPause;
-  if (Ani->KeysClick[VK_ESCAPE])
-    DestroyWindow(Ani->hWnd);
-  if (Ani->Keys[VK_CONTROL])
-  {
-    FLT
+  FLT
       Dist = VecLen(VecSubVec(BS7_RndCamAt, BS7_RndCamLoc)),
       cosT = (BS7_RndCamLoc.Y - BS7_RndCamAt.Y) / Dist,
       sinT = sqrt(1 - cosT * cosT),
@@ -44,51 +36,58 @@ static VOID BS7_UnitResponse( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
       Azimuth = R2D(atan2(sinP, cosP)),
       Elevator = R2D(atan2(sinT, cosT)),
       sx, sy, Wp, Hp;
-    VEC dv;
+  VEC dv;
 
-    Azimuth += Ani->GlobalDeltaTime *
-      (-30 * 1 * Ani->Keys[VK_LBUTTON] * Ani->Mdx +
-       40 * 1 * (Ani->Keys[VK_LEFT] - Ani->Keys[VK_RIGHT]));
+  if (Ani->KeysClick[VK_F11])
+    BS7_AnimFlipFullScreen();
+  if (Ani->KeysClick['P'])
+    Ani->IsPause = !Ani->IsPause;
+  if (Ani->KeysClick[VK_ESCAPE])
+    DestroyWindow(Ani->hWnd);
+  /*if (Ani->Keys[VK_CONTROL])
+  {*/
+  Azimuth += Ani->GlobalDeltaTime *
+    (-30 * 1 * Ani->Keys[VK_LBUTTON] * Ani->Mdx +
+     40 * 1 * (Ani->Keys[VK_LEFT] - Ani->Keys[VK_RIGHT]));
 
-    Elevator += Ani->GlobalDeltaTime *
-      (-10 * 1 * Ani->Keys[VK_LBUTTON] * Ani->Mdy +
-       40 * 1 * (Ani->Keys[VK_UP] - Ani->Keys[VK_DOWN]));
+  Elevator += Ani->GlobalDeltaTime *
+    (-10 * 1 * Ani->Keys[VK_LBUTTON] * Ani->Mdy +
+     40 * 1 * (Ani->Keys[VK_UP] - Ani->Keys[VK_DOWN]));
 
-    Dist += Ani->GlobalDeltaTime *
-      (1 * Ani->Mdz +
-       80 * 0.1 * (1 + Ani->Keys[VK_SHIFT] * 30) *
-          (Ani->Keys[VK_NEXT] - Ani->Keys[VK_PRIOR]));
-     
-    if (Elevator < 0.08)
-      Elevator = 0.08;
-    if (Elevator > 178)
-      Elevator = 178;
-    if (Dist < 0.1)
-      Dist = 0.1;
+  Dist += Ani->GlobalDeltaTime *
+    (1 * Ani->Mdz +
+     80 * 0.1 * (1 + Ani->Keys[VK_SHIFT] * 30) *
+        (Ani->Keys[VK_NEXT] - Ani->Keys[VK_PRIOR]));
+   
+  if (Elevator < 0.08)
+    Elevator = 0.08;
+  if (Elevator > 178)
+    Elevator = 178;
+  if (Dist < 0.1)
+    Dist = 0.1;
 
-    Wp = BS7_RndProjSize;
-    Hp = BS7_RndProjSize;
-     
-    if (Ani->W > Ani->H)
-      Wp *= (FLT)Ani->W / Ani->H;
-    else
-      Hp *= (FLT)Ani->H / Ani->W;
-     
-    sx = Ani->Keys[VK_RBUTTON] * -Ani->Mdx * Wp / Ani->W * Dist / BS7_RndProjDist;
-    sy = Ani->Keys[VK_RBUTTON] * Ani->Mdy * Hp / Ani->H * Dist / BS7_RndProjDist;
+  Wp = BS7_RndProjSize;
+  Hp = BS7_RndProjSize;
+   
+  if (Ani->W > Ani->H)
+    Wp *= (FLT)Ani->W / Ani->H;
+  else
+    Hp *= (FLT)Ani->H / Ani->W;
+   
+  sx = Ani->Keys[VK_RBUTTON] * -Ani->Mdx * Wp / Ani->W * Dist / BS7_RndProjDist;
+  sy = Ani->Keys[VK_RBUTTON] * Ani->Mdy * Hp / Ani->H * Dist / BS7_RndProjDist;
 
-    dv = VecAddVec(VecMulNum(BS7_RndCamRight, sx),
-                   VecMulNum(BS7_RndCamUp, sy));
-    BS7_RndCamAt = VecAddVec(BS7_RndCamAt, dv);
-    BS7_RndCamLoc = VecAddVec(BS7_RndCamLoc, dv);
-     
-    BS7_RndCamSet(PointTransform(VecSet(0, Dist, 0),
-                                 MatrMulMatr3(MatrRotateX(Elevator),
-                                              MatrRotateY(Azimuth),
-                                              MatrTranslate(BS7_RndCamAt))),
-                  BS7_RndCamAt,
-                  VecSet(0, 1, 0));
-  }
+  dv = VecAddVec(VecMulNum(BS7_RndCamRight, sx),
+                 VecMulNum(BS7_RndCamUp, sy));
+  BS7_RndCamAt = VecAddVec(BS7_RndCamAt, dv);
+  BS7_RndCamLoc = VecAddVec(BS7_RndCamLoc, dv);
+   
+  BS7_RndCamSet(PointTransform(VecSet(0, Dist, 0),
+                               MatrMulMatr3(MatrRotateX(Elevator),
+                                            MatrRotateY(Azimuth),
+                                            MatrTranslate(BS7_RndCamAt))),
+                BS7_RndCamAt,
+                VecSet(0, 1, 0));
 } /*End of 'BS7_UnitResponse' function*/
 
 static VOID BS7_UnitRender( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )

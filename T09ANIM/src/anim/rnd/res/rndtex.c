@@ -12,7 +12,7 @@
 
 INT BS7_RndTexAddImg( CHAR *Name, INT w, INT h, INT C, VOID *ImageData )
 {
-  FLT mips;
+  INT mips, i;
 
   if (BS7_RndTexturesSize >= BS7_MAX_TEXTURES)
     return -1;
@@ -21,9 +21,14 @@ INT BS7_RndTexAddImg( CHAR *Name, INT w, INT h, INT C, VOID *ImageData )
   glBindTexture(GL_TEXTURE_2D, BS7_RndTextures[BS7_RndTexturesSize].TexId);
   mips = log(w > h ? w : h) / log(2);
   mips = mips < 1 ? 1 : mips;
-  glTexStorage2D(GL_TEXTURE_2D, mips, GL_RGB8, w, h);
+  glTexStorage2D(GL_TEXTURE_2D, mips, C == 4 ? GL_RGBA8 : C == 3 ? GL_RGB8 : GL_R8, w, h);
 
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, GL_BGR, GL_UNSIGNED_BYTE, ImageData);
+  if (ImageData != NULL)
+  {
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, C == 4 ? GL_BGRA : C == 3 ? GL_BGR : GL_RED, GL_UNSIGNED_BYTE, ImageData);
+  }
+
   glGenerateMipmap(GL_TEXTURE_2D);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -37,24 +42,28 @@ INT BS7_RndTexAddImg( CHAR *Name, INT w, INT h, INT C, VOID *ImageData )
                                               
   glBindTexture(GL_TEXTURE_2D, 0);
 
-  return BS7_RndTexturesSize++;
+  i = BS7_RndTexturesSize++;
+
+  return i;
 }
 
 INT BS7_RndTexAddFromFile( CHAR *FileName )
 {
   HBITMAP hBm;  /* .bmp: */
-  INT TexNo;
+  INT ret = -1;
 
   if ((hBm = LoadImage(NULL, FileName, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION)) != NULL)
   {
     BITMAP bm;
  
     GetObject(hBm, sizeof(bm), &bm);
-    TexNo = BS7_RndTexAddImg(FileName, bm.bmWidth, bm.bmHeight, bm.bmBitsPixel / 8, bm.bmBits);
+    if (bm.bmBitsPixel == 24 || bm.bmBitsPixel == 8 || bm.bmBitsPixel == 32)
+      ret = BS7_RndTexAddImg(FileName, bm.bmWidth, bm.bmHeight, bm.bmBitsPixel >> 3, bm.bmBits);
     DeleteObject(hBm);
+    //return ret;
   }
 
-  return TexNo;
+  return ret;
 }
 
 VOID BS7_RndTexInit( VOID )

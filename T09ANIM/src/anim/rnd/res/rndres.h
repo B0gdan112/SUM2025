@@ -65,6 +65,8 @@ INT BS7_RndMtlAdd( bs7MATERIAL *Mtl );
 
 UINT BS7_RndMtlApply( INT MtlNo );
 
+bs7MATERIAL * BS7_RndMtlGet( INT MtlNo );
+
 /* Textures */
 
 typedef struct tagbs7TEXTURE

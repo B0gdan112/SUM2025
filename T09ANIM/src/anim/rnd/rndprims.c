@@ -7,13 +7,6 @@
 #include "rnd.h"
 #include "def.h"
 
-typedef struct tagbs7PRIMS
-{
-  INT NumOfPrims; /* Number of primitives in array */  
-  bs7PRIM *Prims; /* Array of primitives */
-  MATR Trans;     /* Common transformation matrix */
-} bs7PRIMS;
-
 /* Create array of primitives function.
  * ARGUMENTS:
  *   - pointer to primitives structure:
@@ -49,6 +42,7 @@ VOID BS7_RndPrimsFree( bs7PRIMS *Prs )
     for (i = 0; i < Prs->NumOfPrims; i++)
       BS7_RndPrimFree(&Prs->Prims[i]);
   }
+  free(Prs->Prims);
   memset(Prs, 0, sizeof(bs7PRIMS));
 } /* End of 'BS7_RndPrimsFree' function */
  
@@ -67,20 +61,20 @@ VOID BS7_RndPrimsDraw( bs7PRIMS *Prs, MATR World )
  
   /* Draw all nontransparent primitives */ 
   for (i = 0; i < Prs->NumOfPrims; i++)
-    if (Prs->Prims[i].MtlNo->Trans == 1)
+    if (BS7_RndMtlGet(Prs->Prims[i].MtlNo)->Trans == 1)
       BS7_RndPrimDraw(&Prs->Prims[i], m);
  
   /* Draw all transparent primitives with front face culling */ 
   glEnable(GL_CULL_FACE);
   glCullFace(GL_FRONT);
   for (i = 0; i < Prs->NumOfPrims; i++)
-    if (Prs->Prims[i].MtlNo->Trans != 1)
+    if (BS7_RndMtlGet(Prs->Prims[i].MtlNo)->Trans != 1)
       BS7_RndPrimDraw(&Prs->Prims[i], m);
  
   /* Draw all transparent primitives with back face culling */ 
   glCullFace(GL_BACK);
   for (i = 0; i < Prs->NumOfPrims; i++)
-    if (Prs->Prims[i].MtlNo->Trans != 1)
+    if (BS7_RndMtlGet(Prs->Prims[i].MtlNo)->Trans != 1)
       BS7_RndPrimDraw(&Prs->Prims[i], m);
  
   glDisable(GL_CULL_FACE);
@@ -95,7 +89,7 @@ VOID BS7_RndPrimsDraw( bs7PRIMS *Prs, MATR World )
  * RETURNS:
  *   (BOOL) TRUE if success, FALSE otherwise.
  */
-BOOL BS7_RndPrimsLoad( BS7PRIMS *Prs, CHAR *FileName )
+BOOL BS7_RndPrimsLoad( bs7PRIMS *Prs, CHAR *FileName )
 {
   FILE *F;
   INT flen, p, m, t;
@@ -118,7 +112,7 @@ BOOL BS7_RndPrimsLoad( BS7PRIMS *Prs, CHAR *FileName )
     DWORD Shader;       /* Shader number (uses after load into memory) */
   } *mtls;
  
-  memset(Prs, 0, sizeof(BS7PRIMS));
+  memset(Prs, 0, sizeof(bs7PRIMS));
   if ((F = fopen(FileName, "rb")) == NULL)
     return FALSE;
  
@@ -167,7 +161,7 @@ BOOL BS7_RndPrimsLoad( BS7PRIMS *Prs, CHAR *FileName )
     DWORD NumOfVertexes;
     DWORD NumOfFacetIndexes;  /* num of facets * 3 */
     DWORD MtlNo;              /* Material number in table below (in material section) */
-    BS7VERTEX *V;
+    bs7VERTEX *V;
     INT *Ind;
  
     NumOfVertexes = *(DWORD *)ptr;
@@ -176,8 +170,8 @@ BOOL BS7_RndPrimsLoad( BS7PRIMS *Prs, CHAR *FileName )
     ptr += 4;
     MtlNo = *(DWORD *)ptr;
     ptr += 4;
-    V = (BS7VERTEX *)ptr;
-    ptr += sizeof(BS7VERTEX) * NumOfVertexes;
+    V = (bs7VERTEX *)ptr;
+    ptr += sizeof(bs7VERTEX) * NumOfVertexes;
     Ind = (INT *)ptr;
     ptr += sizeof(INT) * NumOfFacetIndexes;
  
@@ -190,7 +184,7 @@ BOOL BS7_RndPrimsLoad( BS7PRIMS *Prs, CHAR *FileName )
   ptr += sizeof(struct mtls) * NumOfMaterials;
   for (m = 0; m < (INT)NumOfMaterials; m++)
   {
-    BS7MATERIAL mtl = BS7_RndMtlGetDef();
+    bs7MATERIAL mtl = BS7_RndMtlGetDef();
  
     mtl.Ka = mtls[m].Ka;
     mtl.Kd = mtls[m].Kd;
@@ -223,7 +217,8 @@ BOOL BS7_RndPrimsLoad( BS7PRIMS *Prs, CHAR *FileName )
     BS7_RndTexAddImg(Name, W, H, C, ptr);
     ptr += W * H * C;
   }
+
   free(mem);
+
   return TRUE;
 } /* End of 'BS7_RndPrimsDraw' function */
- 

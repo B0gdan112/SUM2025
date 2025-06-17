@@ -22,6 +22,7 @@ static VOID BS7_UnitInit( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
   bs7GRID G;
   INT w, h;
   INT x, y;
+  bs7MATERIAL mtl;
 
   if ((hBm = LoadImage(NULL, "bin/heights/hf.bmp", IMAGE_BITMAP, 0, 0,
                        LR_LOADFROMFILE | LR_CREATEDIBSECTION)) != NULL)
@@ -30,8 +31,6 @@ static VOID BS7_UnitInit( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
 
     w = bm.bmWidth;
     h = bm.bmHeight;
-
-    BS7_RndTexAddFromFile("bin/textures/hfcolor.bmp");
 
     if (bm.bmBitsPixel == 8 && BS7_RndGridCreate(&G, w, h) != 0)
     {
@@ -42,15 +41,22 @@ static VOID BS7_UnitInit( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
         {
           INT hgt = Bits[(h - 1 - y) * bm.bmWidthBytes + x];
  
-          G.V[y * w + x].P = VecSet(x / (w - 1.0), hgt / 255.0, 1 - y / (h - 1.0));
+          G.V[y * w + x].P = VecSet(x / (w - 1.0), hgt / 955.0, 1 - y / (h - 1.0));
+          G.V[y * w + x].T = Vec2Set(x / (w - 1.0), (1 - y / (h - 1.0)));
         }
       BS7_RndGridAutoNormals(&G);
       BS7_RndPrimFromGrid(&Uni->Land, &G);
       BS7_RndGridFree(&G);
     }
-
     DeleteObject(hBm);
   }
+
+  /* material for land */
+  mtl = BS7_RndMtlGetDef();
+  strcpy(mtl.Name, "Land Material");
+  mtl.Tex[0] = BS7_RndTexAddFromFile("bin/textures/hfcolor.bmp");
+  mtl.ShdNo = BS7_RndShdAdd("Land");
+  Uni->Land.MtlNo = BS7_RndMtlAdd(&mtl);
 } /*End of 'BS7_UnitInit' function*/
 
 static VOID BS7_UnitClose( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
