@@ -47,6 +47,8 @@ typedef struct tagbs7ANIM
   BYTE JBut[32], JButOld[32], JButClick[32];
   INT JPov;
   DBL JX, JY, JZ, JR;
+
+  INT PosZ;
 };
 
 extern bs7ANIM BS7_Anim;

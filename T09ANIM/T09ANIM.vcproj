@@ -256,6 +256,10 @@
 						Name="Resourses"
 						>
 						<File
+							RelativePath=".\src\anim\rnd\res\rndfnt.c"
+							>
+						</File>
+						<File
 							RelativePath=".\src\anim\rnd\res\rndmtl.c"
 							>
 						</File>
@@ -307,6 +311,10 @@
 				</File>
 				<File
 					RelativePath=".\src\units\u_monokuma.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\units\u_sky.c"
 					>
 				</File>
 				<File

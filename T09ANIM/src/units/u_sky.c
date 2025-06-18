@@ -1,7 +1,7 @@
-/* FILE NAME: u_monokuma.c
+/* FILE NAME: u_sky.c
  * PURPOSE: units module.
  * PROGRAMMER: BS7
- * DATE: 10.06.2025
+ * DATE: 18.06.2025
  */
 
 #include "units/units.h"
@@ -16,6 +16,7 @@ typedef struct
 static VOID BS7_UnitInit( bs7UNIT_SKY *Uni, bs7ANIM *Ani )
 {
   bs7MATERIAL mtl;
+
   Uni->Pos = VecSet1(0);
   BS7_RndPrimLoad(&Uni->Pr, "bin/models/monokuma.obj");
 
@@ -33,22 +34,14 @@ static VOID BS7_UnitClose( bs7UNIT_SKY *Uni, bs7ANIM *Ani )
 
 static VOID BS7_UnitResponse( bs7UNIT_SKY *Uni, bs7ANIM *Ani )
 {
-  Uni->Pos.X += 0;
 } /*End of 'BS7_UnitResponse' function*/
 
 static VOID BS7_UnitRender( bs7UNIT_SKY *Uni, bs7ANIM *Ani )
 {
-  MATR p;
-  
-  p = MatrIdentity();
-  p = MatrMulMatr(p, MatrRotateY(100 * Ani->Time));
-  p = MatrMulMatr(p, MatrTranslate(VecSet(Uni->Pos.X, Uni->Pos.Y + fabs(2 * sin(2 * Ani->Time)) - 2, Uni->Pos.Z)));
-  p = MatrMulMatr(p, MatrScale(VecSet1(3)));
-
-  BS7_RndPrimDraw(&Uni->Pr, p);
+  BS7_RndPrimDraw(&Uni->Pr, MatrIdentity());
 } /*End of 'BS7_UnitResponse' function*/
 
-bs7UNIT * BS7_UnitCreateKuma( VOID )
+bs7UNIT * BS7_UnitCreateSky( VOID )
 { 
   bs7UNIT *Uni;
 

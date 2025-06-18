@@ -25,17 +25,26 @@ static VOID BS7_UnitClose( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 
 static VOID BS7_UnitResponse( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 {
+  Uni->Pos = PointTransform(Uni->Pos, MatrTranslate(
+                            VecSet(Ani->Keys['A'] * Ani->GlobalDeltaTime * 10 - Ani->Keys['D'] * Ani->GlobalDeltaTime * 10
+                            + (-Ani->JX) * 30 * Ani->GlobalDeltaTime, 0, 0)));
+  Uni->Pos = PointTransform(Uni->Pos, MatrTranslate(
+                            VecSet(0, 0, Ani->Keys['W'] * Ani->GlobalDeltaTime * 10
+                            - Ani->Keys['S'] * Ani->GlobalDeltaTime * 10 + (-Ani->JY) * 30 * Ani->GlobalDeltaTime)));
 } /*End of 'BS7_UnitResponse' function*/
 
 static VOID BS7_UnitRender( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 {
   MATR p;
-  
-  p = MatrIdentity();
-  p = MatrMulMatr(p, MatrTranslate(VecSet(10, -1060, 10)));
-  p = MatrMulMatr(p, MatrScale(VecSet1(0.01)));
 
-  BS7_RndPrimsDraw(&Uni->Pr, p);
+  p = MatrIdentity();
+  p = MatrMulMatr(p, MatrTranslate(VecSet(10, 0, 10)));
+  p = MatrMulMatr(p, MatrScale(VecSet1(0.1)));
+
+
+  p = MatrMulMatr(p, MatrRotateY(Ani->PosZ));
+
+  BS7_RndPrimsDraw(&Uni->Pr, MatrMulMatr(p, MatrTranslate(Uni->Pos)));
 } /*End of 'BS7_UnitResponse' function*/
 
 bs7UNIT * BS7_UnitCreateModel( VOID )

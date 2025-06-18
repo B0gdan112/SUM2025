@@ -49,6 +49,8 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   system("@chcp 1251 > nul");
   printf("\x1b[38;2;%d;%d;%dm\x1b[48;2;%d;%d;%dm", 200, 0, 200, 0, 255, 100);
   printf("!!!!!!!!!\n");
+  printf("%lf\n", BS7_Anim.JX);
+  printf("%lf\n", BS7_Anim.JY);
   printf("Version : %s\n", glGetString(GL_VERSION));
   printf("Vendor  : %s\n", glGetString(GL_VENDOR));
   printf("Renderer: %s\n", glGetString(GL_RENDERER));

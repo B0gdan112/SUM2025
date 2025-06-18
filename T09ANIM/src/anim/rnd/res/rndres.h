@@ -86,4 +86,38 @@ INT BS7_RndTextureFree( INT TexNo );
 VOID BS7_RndTexInit( VOID );
 VOID BS7_RndTexClose( VOID );
 
+/* Font type and functions */
+
+typedef struct tagbs7FONT
+{
+  DWORD LineH, BaseH; /* Font line height and base line height in pixels */
+  FLT AdvanceX[256];  /* Every letter shift right value (0 if no letter present) */
+} bs7FONT;
+
+BOOL BS7_RndFntLoad( CHAR *FileName );
+ 
+/* Init font subsystem function.
+ * ARGUMENTS: None.
+ * RETURNS: None.
+ */
+VOID BS7_RndFntInit( VOID );
+
+/* Deinit font subsystem function.
+ * ARGUMENTS: None.
+ * RETURNS: None.
+ */
+VOID BS7_RndFntClose( VOID );
+ 
+/* Draw string function.
+ * ARGUMENTS:
+ *   - string to draw:
+ *       CHAR *Str;
+ *   - draw position:
+ *       VEC Pos;
+ *   - font size:
+ *      FLT Size;
+ * RETURNS: None.
+ */
+VOID BS7_RndFntDraw( CHAR *Str, VEC Pos, FLT Size );
+
 #endif /* __rndres_h_ */

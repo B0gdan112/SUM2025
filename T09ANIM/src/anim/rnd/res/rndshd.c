@@ -58,6 +58,7 @@ static UINT BS7_RndShdLoad( CHAR *FileNamePrefix )
   {
     {"vert", GL_VERTEX_SHADER},
     {"frag", GL_FRAGMENT_SHADER},
+    {"geom", GL_GEOMETRY_SHADER}
   };
   INT i, res, NoofS = sizeof(shds) / sizeof(shds[0]);
   UINT prg = 0;
@@ -73,6 +74,8 @@ static UINT BS7_RndShdLoad( CHAR *FileNamePrefix )
     txt = BS7_RndShdLoadTextFromFile(Buf);
     if (txt == NULL)
     {
+      if (i >= 2)
+        continue;
       BS7_RndShdLog(FileNamePrefix, shds[i].Name, "Error load file");
       is_ok = FALSE;
       break;

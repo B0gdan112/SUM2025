@@ -44,8 +44,14 @@ static VOID BS7_UnitResponse( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
     Ani->IsPause = !Ani->IsPause;
   if (Ani->KeysClick[VK_ESCAPE])
     DestroyWindow(Ani->hWnd);
-  /*if (Ani->Keys[VK_CONTROL])
-  {*/
+  if (Ani->KeysClick['F'])
+    BS7_RndCamSet(VecSet1(8), VecSet1(0), VecSet(0, 1, 0));
+
+  if (Ani->Keys['Q'])
+    Ani->PosZ += 5;
+  if (Ani->Keys['E'])
+    Ani->PosZ -= 5;
+
   Azimuth += Ani->GlobalDeltaTime *
     (-30 * 1 * Ani->Keys[VK_LBUTTON] * Ani->Mdx +
      40 * 1 * (Ani->Keys[VK_LEFT] - Ani->Keys[VK_RIGHT]));
