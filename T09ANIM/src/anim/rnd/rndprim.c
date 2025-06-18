@@ -109,6 +109,21 @@ VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
     glUniformMatrix4fv(loc, 1, FALSE, WInv.A[0]);
   if ((loc = glGetUniformLocation(ProgId, "CamLoc")) != -1)
     glUniform3fv(loc, 1, &BS7_RndCamLoc.X);
+  if ((loc = glGetUniformLocation(ProgId, "CamUp")) != -1)
+    glUniform3fv(loc, 1, &BS7_RndCamUp.X);
+  if ((loc = glGetUniformLocation(ProgId, "CamRight")) != -1)
+    glUniform3fv(loc, 1, &BS7_RndCamRight.X);
+  if ((loc = glGetUniformLocation(ProgId, "CamDir")) != -1)
+    glUniform3fv(loc, 1, &BS7_RndCamDir.X);
+  if ((loc = glGetUniformLocation(ProgId, "FrameH")) != -1)
+    glUniform3fv(loc, 1, &BS7_RndFrameH);
+  if ((loc = glGetUniformLocation(ProgId, "FrameW")) != -1)
+    glUniform3fv(loc, 1, &BS7_RndFrameW);
+  if ((loc = glGetUniformLocation(ProgId, "ProjSize")) != -1)
+    glUniform3fv(loc, 1, &BS7_RndProjSize);
+  if ((loc = glGetUniformLocation(ProgId, "ProjDist")) != -1)
+    glUniform3fv(loc, 1, &BS7_RndProjDist);
+
 
   glBindVertexArray(Pr->VA);
   if (Pr->IBuf == 0)
