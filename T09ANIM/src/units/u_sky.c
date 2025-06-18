@@ -17,13 +17,12 @@ static VOID BS7_UnitInit( bs7UNIT_SKY *Uni, bs7ANIM *Ani )
 {
   bs7MATERIAL mtl;
 
-  Uni->Pos = VecSet1(0);
-  BS7_RndPrimLoad(&Uni->Pr, "bin/models/monokuma.obj");
+  BS7_RndPrimCreate(&Uni->Pr, BS7_RND_PRIM_POINTS, NULL, 1, NULL, 0);
 
   mtl = BS7_RndMtlGetDef();
-  strcpy(mtl.Name, "Kuma Material");
-  mtl.Tex[0] = BS7_RndTexAddFromFile("bin/textures/chess.bmp");
-  mtl.ShdNo = BS7_RndShdAdd("Default");
+  strcpy(mtl.Name, "Sky Material");
+  mtl.Tex[0] = BS7_RndTexAddFromFile("bin/textures/sky.bmp");
+  mtl.ShdNo = BS7_RndShdAdd("sky");
   Uni->Pr.MtlNo = BS7_RndMtlAdd(&mtl);
 } /*End of 'BS7_UnitInit' function*/
 
@@ -38,7 +37,9 @@ static VOID BS7_UnitResponse( bs7UNIT_SKY *Uni, bs7ANIM *Ani )
 
 static VOID BS7_UnitRender( bs7UNIT_SKY *Uni, bs7ANIM *Ani )
 {
+  glDepthMask(FALSE);
   BS7_RndPrimDraw(&Uni->Pr, MatrIdentity());
+  glDepthMask(TRUE);
 } /*End of 'BS7_UnitResponse' function*/
 
 bs7UNIT * BS7_UnitCreateSky( VOID )

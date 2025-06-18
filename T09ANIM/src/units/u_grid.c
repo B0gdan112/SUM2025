@@ -71,7 +71,6 @@ static VOID BS7_UnitResponse( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
 static VOID BS7_UnitRender( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
 {
   BS7_RndPrimDraw(&Uni->Land, MatrMulMatr(MatrScale(VecSet1(100)), MatrTranslate(VecSet(-50, -12, -50))));
-  BS7_RndFntDraw("bruh", VecSet(10, 10, 10), 100);
 } /*End of 'BS7_UnitResponse' function*/
 
 bs7UNIT * BS7_UnitCreateGrid( VOID )

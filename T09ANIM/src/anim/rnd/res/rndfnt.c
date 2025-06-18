@@ -121,8 +121,7 @@ VOID BS7_RndFntDraw( CHAR *Str, VEC Pos, FLT Size )
     {
       if (BS7_RndFntFont.AdvanceX[(BYTE)*Str] != 0)
       {
-        BS7_RndPrimDraw(&BS7_RndFntChars[(BYTE)*Str],
-          MatrMulMatr(MatrScale(VecSet(Size, Size, 1)), MatrTranslate(Pos)));
+        BS7_RndPrimDraw(&BS7_RndFntChars[(BYTE)*Str], MatrMulMatr(MatrScale(VecSet(Size, Size, 1)), MatrTranslate(Pos)));
         Pos.X += BS7_RndFntFont.AdvanceX[(BYTE)*Str] * Size;
       }
     }

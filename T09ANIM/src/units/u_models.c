@@ -38,11 +38,15 @@ static VOID BS7_UnitRender( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
   MATR p;
 
   p = MatrIdentity();
-  p = MatrMulMatr(p, MatrTranslate(VecSet(10, 0, 10)));
+  p = MatrMulMatr(p, MatrTranslate(VecSet(0, 0, 0)));
   p = MatrMulMatr(p, MatrScale(VecSet1(0.1)));
 
-
-  p = MatrMulMatr(p, MatrRotateY(Ani->PosZ));
+  if (Ani->Keys['A'])
+    p = MatrMulMatr(p, MatrRotateY(90));
+  else if (Ani->Keys['D'])
+    p = MatrMulMatr(p, MatrRotateY(-90));
+  else if (Ani->Keys['S'])
+    p = MatrMulMatr(p, MatrRotateY(180));
 
   BS7_RndPrimsDraw(&Uni->Pr, MatrMulMatr(p, MatrTranslate(Uni->Pos)));
 } /*End of 'BS7_UnitResponse' function*/
