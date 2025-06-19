@@ -15,16 +15,17 @@ typedef struct
   VEC Pos;
 } bs7UNIT_GRID;
 
+static bs7GRID G;
+
 static VOID BS7_UnitInit( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
 {
   HBITMAP hBm;
   BITMAP bm;
-  bs7GRID G;
   INT w, h;
   INT x, y;
   bs7MATERIAL mtl;
 
-  if ((hBm = LoadImage(NULL, "bin/heights/hf.bmp", IMAGE_BITMAP, 0, 0,
+  if ((hBm = LoadImage(NULL, "bin/heights/flat.bmp", IMAGE_BITMAP, 0, 0,
                        LR_LOADFROMFILE | LR_CREATEDIBSECTION)) != NULL)
   {
     GetObject(hBm, sizeof(bm), &bm);
@@ -41,12 +42,11 @@ static VOID BS7_UnitInit( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
         {
           INT hgt = Bits[(h - 1 - y) * bm.bmWidthBytes + x];
  
-          G.V[y * w + x].P = VecSet(x / (w - 1.0), hgt / 955.0, 1 - y / (h - 1.0));
+          G.V[y * w + x].P = VecSet(x / (w - 1.0) * 100, hgt / 18.0, 1 - y / (h - 1.0) * 100);
           G.V[y * w + x].T = Vec2Set(x / (w - 1.0), (1 - y / (h - 1.0)));
         }
       BS7_RndGridAutoNormals(&G);
       BS7_RndPrimFromGrid(&Uni->Land, &G);
-      BS7_RndGridFree(&G);
     }
     DeleteObject(hBm);
   }
@@ -54,13 +54,14 @@ static VOID BS7_UnitInit( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
   /* material for land */
   mtl = BS7_RndMtlGetDef();
   strcpy(mtl.Name, "Land Material");
-  mtl.Tex[0] = BS7_RndTexAddFromFile("bin/textures/hfcolor.bmp");
+  mtl.Tex[0] = BS7_RndTexAddFromFile("bin/heights/h.bmp");
   mtl.ShdNo = BS7_RndShdAdd("Land");
   Uni->Land.MtlNo = BS7_RndMtlAdd(&mtl);
 } /*End of 'BS7_UnitInit' function*/
 
 static VOID BS7_UnitClose( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
 {
+  BS7_RndGridFree(&G);
   BS7_RndPrimFree(&Uni->Land);
 } /*End of 'BS7_UnitClose' function*/
 
@@ -70,7 +71,7 @@ static VOID BS7_UnitResponse( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
 
 static VOID BS7_UnitRender( bs7UNIT_GRID *Uni, bs7ANIM *Ani )
 {
-  BS7_RndPrimDraw(&Uni->Land, MatrMulMatr(MatrScale(VecSet1(100)), MatrTranslate(VecSet(-50, -12, -50))));
+  BS7_RndPrimDraw(&Uni->Land, MatrTranslate(VecSet(-45, 0, 3)));
 } /*End of 'BS7_UnitResponse' function*/
 
 bs7UNIT * BS7_UnitCreateGrid( VOID )

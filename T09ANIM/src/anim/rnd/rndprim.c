@@ -116,13 +116,13 @@ VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
   if ((loc = glGetUniformLocation(ProgId, "CamDir")) != -1)
     glUniform3fv(loc, 1, &BS7_RndCamDir.X);
   if ((loc = glGetUniformLocation(ProgId, "FrameH")) != -1)
-    glUniform3fv(loc, 1, &BS7_RndFrameH);
+    glUniform1f(loc, BS7_RndFrameH);
   if ((loc = glGetUniformLocation(ProgId, "FrameW")) != -1)
-    glUniform3fv(loc, 1, &BS7_RndFrameW);
+    glUniform1f(loc, BS7_RndFrameW);
   if ((loc = glGetUniformLocation(ProgId, "ProjSize")) != -1)
-    glUniform3fv(loc, 1, &BS7_RndProjSize);
+    glUniform1f(loc, BS7_RndProjSize);
   if ((loc = glGetUniformLocation(ProgId, "ProjDist")) != -1)
-    glUniform3fv(loc, 1, &BS7_RndProjDist);
+    glUniform1f(loc, BS7_RndProjDist);
 
 
   glBindVertexArray(Pr->VA);
@@ -140,36 +140,26 @@ VOID BS7_RndPrimDraw( bs7PRIM *Pr, MATR World )
   glUseProgram(0);
 } /* End of 'BS7_RndPrimDraw' function */
 
-/*BOOL BS7_RndPrimCreateSphere( bs7PRIM *Pr, DBL R, INT W, INT H )
+/* BOOL BS7_RndPrimCreateCube( bs7PRIM *Pr, INT W, INT H )
 {
   INT i, j, k;
-  DBL tetha, phi;
-  INT vn = W * H, fn = (W - 1) * 2 * (H - 1) * 3
+  INT vn = W * H, fn = (W - 1) * 2 * (H - 1) * 3;
 
-  memset(Pr, 0, sizeof(bs7PRIM));
-  if (!BS7_RndPrimCreate(Pr, BS7_RND_PRIM_TRIMESH, V, vn, I, fn))
-    return FALSE;
-
-  for (k = 0, i = 0, tetha = 0.0f; i < H; i++, tetha += PI / (H - 1))
-    for (j = 0, phi = 0.0f; j < W; j++, phi += 2 * PI / (W - 1))
-    {
-      Pr->VA[k].P.X = R * sin(tetha) * sin(phi);
-      Pr->VA[k].P.Y = R * cos(tetha);
-      Pr->VA[k].P.Z = R * sin(tetha) * cos(phi);
-
-      k++;
-    }
-
-  for (k = 0, i = 0; i < H - 1; i++)
-    for (j = 0; j < W - 1; j++)
-    {
-      Pr->IBuf[k++] = i * W + j;
-      Pr->IBuf[k++] = i * W + j + 1;
-      Pr->IBuf[k++] = (i + 1) * W + j;
-    }
+  glBindVertexArray();
+  if (Pr->IBuf == 0)
+  {
+    glDrawArrays(gl_prim_type, 0, Pr->NumOfElements);
+    glBindVertexArray(0);
+  }
+  else
+  {
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Pr->IBuf);
+    glDrawElements(gl_prim_type, Pr->NumOfElements, GL_UNSIGNED_INT, NULL);
+    glBindVertexArray(0);
+  }
 
   return TRUE;
-} /* End of 'BS7_RndPrimCreateSphere' function */
+} /* End of 'BS7_RndPrimCreateCube' function */
 
 BOOL BS7_RndPrimLoad( bs7PRIM *Pr, CHAR *FileName )
 {
@@ -295,4 +285,8 @@ VOID BS7_RndPrimTriMeshAutoNormals( bs7VERTEX *V, INT NumOfV, INT *Ind, INT NumO
     V[i].C = Vec4SetVec3(VecSet(0, 0.5, 0), 1);
   }
 } /* End of 'BS7_RndPrimTriMeshAutoNormals' function */
+
+/*VOID BS7_RndDrawLab( CHAR *FileName )
+{
+} */ 
 

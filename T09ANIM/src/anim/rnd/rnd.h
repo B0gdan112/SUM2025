@@ -31,6 +31,8 @@ extern MATR
 
 extern VEC BS7_RndCamLoc, BS7_RndCamAt, BS7_RndCamDir, BS7_RndCamRight, BS7_RndCamUp;
 
+//extern BS7_RndVertexHeighth[100][100][100];
+
 typedef struct tagbs7VERTEX
 {
   VEC P;
@@ -190,5 +192,57 @@ VOID BS7_RndPrimsDraw( bs7PRIMS *Prs, MATR World );
  *   (BOOL) TRUE if success, FALSE otherwise.
  */
 BOOL BS7_RndPrimsLoad( bs7PRIMS *Prs, CHAR *FileName );
+
+VOID BS7_RndPrimsDrawLab( bs7PRIMS *Pr, CHAR *FileName, MATR m );
+
+/* Target functions */
+
+/* Initialize render target system function.
+ * ARGUMENTS: None.
+ * RETURNS: None.
+ */
+VOID BS7_RndTargetInit( VOID );
+ 
+/* Deinitialize render target system function.
+ * ARGUMENTS: None.
+ * RETURNS: None.
+ */
+VOID BS7_RndTargetClose( VOID );
+ 
+/* Create render target function.
+ * ARGUMENTS:
+ *   - target frame buffer size:
+ *       INT W, H;
+ * RETURNS: None.
+ */
+VOID BS7_RndTargetCreate( INT W, INT H );
+ 
+/* Free render target system function.
+ * ARGUMENTS: None.
+ * RETURNS: None.
+ */
+VOID BS7_RndTargetFree( VOID );
+ 
+/* Start frame through target system function.
+ * ARGUMENTS: None.
+ * RETURNS: None.
+ */
+VOID BS7_RndTargetStart( VOID );
+ 
+/* Finalize frame through target system function.
+ * ARGUMENTS: None.
+ * RETURNS: None.
+ */
+VOID BS7_RndTargetEnd( VOID );
+
+/* Resize render target frame buffer function.
+ * ARGUMENTS:
+ *   - target frame buffer size:
+ *       INT W, H;
+ * RETURNS: None.
+ */
+VOID BS7_RndTargetResize( INT W, INT H );
+
+INT BS7_RndTexAddFmt( CHAR *Name, INT W, INT H, INT GLType );
 
 #endif /* __rnd_h_ */

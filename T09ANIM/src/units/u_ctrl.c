@@ -100,9 +100,8 @@ static VOID BS7_UnitRender( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
 {
   static CHAR Buf[102];
 
-  sprintf(Buf, "%d  CGSG Animation: FPS = %.5f %s %s %s", Ani->IsActive, Ani->FPS, glGetString(GL_RENDERER), glGetString(GL_VENDOR), glGetString(GL_VERSION));
-  SetWindowText(Ani->hWnd, Buf);
-  BS7_RndFntDraw("bruh", VecSet(10, 10, 10), 10);
+  sprintf(Buf, "%d  CGSG Animation: FPS = %.5f\nTime: %lf", Ani->IsActive, Ani->FPS, Ani->GlobalTime);
+  BS7_RndFntDraw(Buf, VecSet(0, 0, 0), 30);
 } /*End of 'BS7_UnitRender' function*/
 
 bs7UNIT * BS7_UnitCreateInit( VOID )

@@ -120,4 +120,17 @@ VOID BS7_RndFntClose( VOID );
  */
 VOID BS7_RndFntDraw( CHAR *Str, VEC Pos, FLT Size );
 
+/* Add texture by OpenGL low-level format to stock function.
+ * ARGUMENTS:
+ *   - texture name:
+ *       CHAR *Name;
+ *   - texture size in pixels:
+ *       INT W, H;
+ *   - OpenGL texture element data type:
+ *       INT GLType;
+ * RETURNS:
+ *   (INT) texture stock number (0 if error is occured).
+ */
+INT BS7_RndTexAddFmt( CHAR *Name, INT W, INT H, INT GLType );
+
 #endif /* __rndres_h_ */

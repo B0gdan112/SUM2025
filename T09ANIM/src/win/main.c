@@ -78,7 +78,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   }
 
   hWnd = CreateWindow(WND_CLASS_NAME,
-    "Title",
+    "Labyrinth",
     WS_OVERLAPPEDWINDOW,
     CW_USEDEFAULT, CW_USEDEFAULT,
     CW_USEDEFAULT, CW_USEDEFAULT,
@@ -88,11 +88,12 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
     NULL);
 
   ShowWindow(hWnd, SW_SHOWNORMAL);
-  BS7_AnimUnitAdd(BS7_UnitCreateSky());
+  BS7_AnimUnitAdd(BS7_UnitCreateLAB());
   //BS7_AnimUnitAdd(BS7_UnitCreateKuma());
   BS7_AnimUnitAdd(BS7_UnitCreateGrid());
   BS7_AnimUnitAdd(BS7_UnitCreateInit());
   BS7_AnimUnitAdd(BS7_UnitCreateModel());
+  BS7_AnimUnitAdd(BS7_UnitCreateLab());
 
   while (TRUE)
   {

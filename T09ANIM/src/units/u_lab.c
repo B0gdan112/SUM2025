@@ -1,7 +1,7 @@
-/* FILE NAME: u_monokuma.c
+/* FILE NAME: u_lab.c
  * PURPOSE: units module.
  * PROGRAMMER: BS7
- * DATE: 10.06.2025
+ * DATE: 19.06.2025
  */
 
 #include "units/units.h"
@@ -9,31 +9,22 @@
 typedef struct
 {
   BS7_UNIT_BASE_FIELDS;
-  bs7PRIM Pr;
+  bs7PRIMS Pr;
   VEC Pos;
 } bs7UNIT_LAB;
 
 static VOID BS7_UnitInit( bs7UNIT_LAB *Uni, bs7ANIM *Ani )
 {
-  bs7MATERIAL mtl;
-  Uni->Pos = VecSet1(0);
-  BS7_RndPrimLoad(&Uni->Pr, "bin/models/monokuma.obj");
-
-  mtl = BS7_RndMtlGetDef();
-  strcpy(mtl.Name, "Kuma Material");
-  mtl.Tex[0] = BS7_RndTexAddFromFile("bin/textures/chess.bmp");
-  mtl.ShdNo = BS7_RndShdAdd("Default");
-  Uni->Pr.MtlNo = BS7_RndMtlAdd(&mtl);
+  BS7_RndPrimsLoad(&Uni->Pr, "bin/models/shelf.g3dm");
 } /*End of 'BS7_UnitInit' function*/
 
 static VOID BS7_UnitClose( bs7UNIT_LAB *Uni, bs7ANIM *Ani )
 {
-  BS7_RndPrimFree(&Uni->Pr);
+  BS7_RndPrimsFree(&Uni->Pr);
 } /*End of 'BS7_UnitClose' function*/
 
 static VOID BS7_UnitResponse( bs7UNIT_LAB *Uni, bs7ANIM *Ani )
 {
-  Uni->Pos.X += 0;
 } /*End of 'BS7_UnitResponse' function*/
 
 static VOID BS7_UnitRender( bs7UNIT_LAB *Uni, bs7ANIM *Ani )
@@ -41,14 +32,10 @@ static VOID BS7_UnitRender( bs7UNIT_LAB *Uni, bs7ANIM *Ani )
   MATR p;
   
   p = MatrIdentity();
-  p = MatrMulMatr(p, MatrRotateY(100 * Ani->Time));
-  p = MatrMulMatr(p, MatrTranslate(VecSet(Uni->Pos.X, Uni->Pos.Y + fabs(2 * sin(2 * Ani->Time)) - 2, Uni->Pos.Z)));
-  p = MatrMulMatr(p, MatrScale(VecSet1(3)));
-
-  BS7_RndPrimDraw(&Uni->Pr, p);
+  BS7_RndPrimsDrawLab(&Uni->Pr, "bin/heights/lab.txt", p);
 } /*End of 'BS7_UnitResponse' function*/
 
-bs7UNIT * BS7_UnitCreateKuma( VOID )
+bs7UNIT * BS7_UnitCreateLab( VOID )
 { 
   bs7UNIT *Uni;
 
