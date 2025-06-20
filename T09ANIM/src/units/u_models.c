@@ -14,10 +14,9 @@ typedef struct
   bs7PRIMS Pr, Cube;
   VEC Pos;
   CHAR Heights[BS7_Max_Chars1][BS7_Max_Chars1];
-  INT Dx[4] = {0, 1, 0, -1};
-  INT Dz[4] = {-1, 0, 1, 0};
-  INT CurDir = 1;
-
+  INT Dx[4];
+  INT Dz[4];
+  INT CurDir;
 } bs7UNIT_MODEL;
 
 static VOID BS7_RndPrimsLoadHeights( bs7UNIT_MODEL *Uni, CHAR *FileName )
@@ -58,6 +57,10 @@ static VOID BS7_UnitClose( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 
 static VOID BS7_UnitResponse( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 {
+  Uni->Dx = {0, 1, 0, -1};
+  Uni->Dz = {-1, 0, 1, 0};
+  Uni->CurDir = 1;
+
   Uni->Pos = PointTransform(Uni->Pos, MatrTranslate(VecSet(-Ani->Keys['S'] + Ani->Keys['W'], 0, 0)));
   Uni->Pos = PointTransform(Uni->Pos, MatrTranslate(VecSet(0, 0, Ani->Keys['D'] - Ani->Keys['A'])));
 
