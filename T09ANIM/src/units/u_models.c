@@ -6,16 +6,49 @@
 
 #include "units/units.h"
 
+#define BS7_Max_Chars1 200
+
 typedef struct
 {
   BS7_UNIT_BASE_FIELDS;
-  bs7PRIMS Pr;
+  bs7PRIMS Pr, Cube;
   VEC Pos;
+  CHAR Heights[BS7_Max_Chars1][BS7_Max_Chars1];
+  INT Dx[4] = {0, 1, 0, -1};
+  INT Dz[4] = {-1, 0, 1, 0};
+  INT CurDir = 1;
+
 } bs7UNIT_MODEL;
+
+static VOID BS7_RndPrimsLoadHeights( bs7UNIT_MODEL *Uni, CHAR *FileName )
+{
+  FILE *F;
+  INT i = 0, j = 0;
+  CHAR Buf[BS7_Max_Chars1];
+
+  if ((F = fopen(FileName, "r")) != NULL)
+  {
+    while (fgets(Buf, sizeof(Buf) - 1, F) != NULL)
+    {
+      j = 0;
+      for (j = 0; Buf[j] != 0 && j < BS7_Max_Chars1; j++)
+      {
+        Uni->Heights[i][j] = Buf[j];
+        if (Buf[j] == 0)
+          Uni->Pos = VecSet(i, 0, j);
+      }
+      i++;
+    }
+    fclose(F);
+  }
+}
 
 static VOID BS7_UnitInit( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 {
+  BS7_RndPrimsLoad(&Uni->Cube, "bin/models/shelf.g3dm");
+  Uni->Cube.Trans = MatrMulMatr(MatrScale(VecSet1(0.5)), MatrTranslate(VecSet(0, 0.5, 0)));
   BS7_RndPrimsLoad(&Uni->Pr, "bin/models/hollow_knight.g3dm");
+  BS7_RndPrimsLoadHeights(Uni, "bin/heights/lab.txt");
 } /*End of 'BS7_UnitInit' function*/
 
 static VOID BS7_UnitClose( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
@@ -25,30 +58,30 @@ static VOID BS7_UnitClose( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 
 static VOID BS7_UnitResponse( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 {
-  Uni->Pos = PointTransform(Uni->Pos, MatrTranslate(
-                            VecSet(Ani->Keys['D'] * Ani->GlobalDeltaTime * 10 - Ani->Keys['A'] * Ani->GlobalDeltaTime * 10
-                            + (-Ani->JX) * 30 * Ani->GlobalDeltaTime, 0, 0)));
-  Uni->Pos = PointTransform(Uni->Pos, MatrTranslate(
-                            VecSet(0, 0, Ani->Keys['S'] * Ani->GlobalDeltaTime * 10
-                            - Ani->Keys['W'] * Ani->GlobalDeltaTime * 10 + (-Ani->JY) * 30 * Ani->GlobalDeltaTime)));
+  Uni->Pos = PointTransform(Uni->Pos, MatrTranslate(VecSet(-Ani->Keys['S'] + Ani->Keys['W'], 0, 0)));
+  Uni->Pos = PointTransform(Uni->Pos, MatrTranslate(VecSet(0, 0, Ani->Keys['D'] - Ani->Keys['A'])));
+
+  if (Uni->Heights[(int)Uni->Pos.X + 1][(int)Uni->Pos.Z] == '*')
+    Uni->Pos = VecSet(Uni->Pos.X, 0, Uni->Pos.Z);
+  BS7_RndCamSet(BS7_RndCamLoc, Uni->Pos, VecSet(0, 1, 0));
 } /*End of 'BS7_UnitResponse' function*/
 
 static VOID BS7_UnitRender( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 {
-  MATR p;
+  MATR m;
+  CHAR Buf[100];
 
-  p = MatrIdentity();
-  p = MatrMulMatr(p, MatrTranslate(VecSet(0, 0, 0)));
-  p = MatrMulMatr(p, MatrScale(VecSet1(0.05)));
+  m = MatrIdentity();
+  m = MatrMulMatr(m, MatrScale(VecSet1(0.01)));
+  m = MatrMulMatr(m, MatrRotateY(90)); 
 
-  if (Ani->Keys['A'])
-    p = MatrMulMatr(p, MatrRotateY(90));
-  else if (Ani->Keys['D'])
-    p = MatrMulMatr(p, MatrRotateY(-90));
-  else if (Ani->Keys['S'])
-    p = MatrMulMatr(p, MatrRotateY(180));
+  BS7_RndPrimsDraw(&Uni->Pr, MatrMulMatr(m, MatrTranslate(Uni->Pos)));
 
-  BS7_RndPrimsDraw(&Uni->Pr, MatrMulMatr(p, MatrTranslate(Uni->Pos)));
+  BS7_RndPrimsDraw(&Uni->Cube, MatrTranslate(VecSet(floor(Uni->Pos.X), -0.9, floor(Uni->Pos.Z))));
+
+  BS7_RndPrimsDraw(&Uni->Pr, MatrMulMatr(m, MatrTranslate(Uni->Pos)));
+  sprintf(Buf, "%lf, %lf", Uni->Pos.X, Uni->Pos.Z);
+  BS7_RndFntDraw(Buf, VecSet(0, -50, 0), 30);
 } /*End of 'BS7_UnitResponse' function*/
 
 bs7UNIT * BS7_UnitCreateModel( VOID )

@@ -193,8 +193,6 @@ VOID BS7_RndPrimsDraw( bs7PRIMS *Prs, MATR World );
  */
 BOOL BS7_RndPrimsLoad( bs7PRIMS *Prs, CHAR *FileName );
 
-VOID BS7_RndPrimsDrawLab( bs7PRIMS *Pr, CHAR *FileName, MATR m );
-
 /* Target functions */
 
 /* Initialize render target system function.

@@ -9,7 +9,7 @@
 
 #include "anim/anim.h"
 
-bs7UNIT * BS7_UnitCreateLAB( VOID );
+bs7UNIT * BS7_UnitCreateSky( VOID );
 bs7UNIT * BS7_UnitCreateKuma( VOID );
 bs7UNIT * BS7_UnitCreateInit( VOID );
 bs7UNIT * BS7_UnitCreateGrid( VOID );

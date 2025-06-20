@@ -16,6 +16,9 @@ typedef struct
   DBL AngleSpeed;
 } bs7UNIT_CTRL;
 
+static INT i = 3, j = 45;
+static BOOL R, F, L;
+
 static VOID BS7_UnitInit( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
 {
 } /*End of 'BS7_UnitInit' function*/
@@ -46,11 +49,6 @@ static VOID BS7_UnitResponse( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
     DestroyWindow(Ani->hWnd);
   if (Ani->KeysClick['F'])
     BS7_RndCamSet(VecSet1(8), VecSet1(0), VecSet(0, 1, 0));
-
-  if (Ani->Keys['Q'])
-    Ani->PosZ += 5;
-  if (Ani->Keys['E'])
-    Ani->PosZ -= 5;
 
   Azimuth += Ani->GlobalDeltaTime *
     (-30 * 1 * Ani->Keys[VK_LBUTTON] * Ani->Mdx +
@@ -100,7 +98,7 @@ static VOID BS7_UnitRender( bs7UNIT_CTRL *Uni, bs7ANIM *Ani )
 {
   static CHAR Buf[102];
 
-  sprintf(Buf, "%d  CGSG Animation: FPS = %.5f\nTime: %lf", Ani->IsActive, Ani->FPS, Ani->GlobalTime);
+  sprintf(Buf, "%d  CGSG Animation: FPS = %.5f\nTime: %lf\n", Ani->IsActive, Ani->FPS, Ani->GlobalTime);
   BS7_RndFntDraw(Buf, VecSet(0, 0, 0), 30);
 } /*End of 'BS7_UnitRender' function*/
 

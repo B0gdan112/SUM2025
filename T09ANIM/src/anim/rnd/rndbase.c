@@ -94,7 +94,7 @@ VOID BS7_RndInit( HWND hWnd )
   glDebugMessageCallback(glDebugOutput, NULL);
 #endif /* NDEBUG */
 
-  wglSwapIntervalEXT(1);
+  wglSwapIntervalEXT(0);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_PRIMITIVE_RESTART);
   glPrimitiveRestartIndex(-1);
@@ -104,7 +104,7 @@ VOID BS7_RndInit( HWND hWnd )
 
   /* Set default render parameters */
   BS7_RndResize(47, 47);
-  BS7_RndCamSet(VecSet1(8), VecSet1(1), VecSet(0, 1, 0));
+  BS7_RndCamSet(VecSet(3, 3, 3), VecSet(10, 1, 10), VecSet(0, 0, -45));
 
   BS7_RndResInit();
 }

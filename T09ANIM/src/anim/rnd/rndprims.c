@@ -223,34 +223,5 @@ BOOL BS7_RndPrimsLoad( bs7PRIMS *Prs, CHAR *FileName )
   return TRUE;
 } /* End of 'BS7_RndPrimsDraw' function */
 
-VOID BS7_RndPrimsDrawLab( bs7PRIMS *Pr, CHAR *FileName, MATR m )
-{
-  FILE *F;
-  INT i, j, x = 0, y = 0;
-  CHAR Buf[1000];
-  INT Lab[1000][1000];
 
-  if ((F = fopen(FileName, "r")) != NULL)
-  {
-    while (fgets(Buf, 1000, F) != NULL)
-    {
-      for (i = 0; i < 1000; i++)
-      {
-        if (Buf[i] == '*')
-          Lab[x][y] = 1;
-        else if (Buf[i] == ' ')
-          Lab[x][y] = 0;
-        else if (Buf[i] == '\n')
-          y++;
-      }
-    }
-  }
 
-  for (i = 0; i < 1000; i++)
-    for (j = 0; j < 1000; j++)
-      if (Lab[i][j] == 1)
-      {
-        m = MatrMulMatr(m, MatrTranslate(VecSet(i, 0, j)));
-        BS7_RndPrimsDraw(Pr, m);
-      }
-}
