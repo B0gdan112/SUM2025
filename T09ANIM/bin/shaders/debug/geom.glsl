@@ -3,8 +3,7 @@
 layout(points) in;
 layout(line_strip, max_vertices = 100) out;
  
-uniform vec3 LightDir;
-uniform mat4 MatrShadow, MatrWVP;
+uniform mat4 MatrWVP;
  
 out vec4 DrawColor;
  
@@ -31,14 +30,6 @@ void main( void )
   gl_Position = MatrWVP * vec4(0, 0, 0, 1);
   EmitVertex();
   gl_Position = MatrWVP * vec4(0, 0, 1, 0);
-  EmitVertex();
-  EndPrimitive();
- 
-  // Light direction
-  DrawColor = vec4(1, 1, 1, 1);
-  gl_Position = MatrWVP * vec4(LightPos, 1);
-  EmitVertex();
-  gl_Position = MatrWVP * vec4(LightPos + LightDir * 102, 1);
   EmitVertex();
   EndPrimitive();
  
@@ -73,13 +64,12 @@ void main( void )
     3, 7,
   };
  
-  mat4 inm = inverse(MatrShadow);
   for (int i = 0; i < e.length(); i++)
   {
-    gl_Position = MatrWVP * inm * vec4(p[e[i]], 1);
+    gl_Position = MatrWVP * vec4(p[e[i]], 1);
     EmitVertex();
     i++;
-    gl_Position = MatrWVP * inm * vec4(p[e[i]], 1);
+    gl_Position = MatrWVP * vec4(p[e[i]], 1);
     EmitVertex();
     EndPrimitive();
   }

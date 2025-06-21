@@ -1,0 +1,42 @@
+defaultfrag
+0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "L"
+0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "LC"
+
+defaultfrag
+0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "L"
+0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "LC"
+
+defaultfrag
+0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "L"
+0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "LC"
+
+defaultfrag
+0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "L"
+0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "LC"
+
+defaultfrag
+0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "L"
+0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "LC"
+
+defaultfrag
+0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "L"
+0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
+0(18) : error C1004: in and out can't be used on local variable "LC"
+
+defaultfrag
+0(46) : error C1503: undefined variable "cAMlOC"
+
+defaultfrag
+0(46) : error C1503: undefined variable "cAMlOC"
+

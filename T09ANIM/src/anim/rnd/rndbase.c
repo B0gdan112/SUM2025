@@ -104,7 +104,7 @@ VOID BS7_RndInit( HWND hWnd )
 
   /* Set default render parameters */
   BS7_RndResize(47, 47);
-  BS7_RndCamSet(VecSet(3, 3, 3), VecSet(10, 1, 10), VecSet(0, 0, -45));
+  BS7_RndCamSet(VecSet1(3), VecSet1(1), VecSet1(0));
 
   BS7_RndResInit();
 }

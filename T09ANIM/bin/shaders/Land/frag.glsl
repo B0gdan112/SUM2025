@@ -17,8 +17,8 @@ in vec2 DrawTexCoord;
 
 vec3 Shade( vec3 P, vec3 N )
 {
-  vec3 LPos = vec3(0, 12, 0);
-  vec3 L = normalize(vec3(1, 5, 4));
+  vec3 LPos = vec3(12, 12, 12);
+  vec3 L = normalize(vec3(2, 5, 4));
   vec3 LC = vec3(1, 1, 1); // light color
   vec3 V = normalize(P - CamLoc);
  

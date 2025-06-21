@@ -178,7 +178,7 @@ BOOL BS7_RndPrimsLoad( bs7PRIMS *Prs, CHAR *FileName )
     BS7_RndPrimCreate(&Prs->Prims[p], BS7_RND_PRIM_TRIMESH, V, NumOfVertexes, Ind, NumOfFacetIndexes);
     Prs->Prims[p].MtlNo = MtlNo + BS7_RndMaterialsSize;
   }
- 
+
   /* Materials */
   mtls = (struct mtls *)ptr;
   ptr += sizeof(struct mtls) * NumOfMaterials;
@@ -220,6 +220,16 @@ BOOL BS7_RndPrimsLoad( bs7PRIMS *Prs, CHAR *FileName )
 
   free(mem);
 
+  if (NumOfPrims > 0)
+  {
+    Prs->MinBB = Prs->Prims[0].MinBB;
+    Prs->MaxBB = Prs->Prims[0].MaxBB;
+    for (p = 1; p < (INT)NumOfPrims; p++)
+    {
+      Prs->MinBB = VecMinVec(Prs->Prims[p].MinBB, Prs->MinBB);
+      Prs->MaxBB = VecMaxVec(Prs->Prims[p].MaxBB, Prs->MaxBB);
+    }
+  }
   return TRUE;
 } /* End of 'BS7_RndPrimsDraw' function */
 

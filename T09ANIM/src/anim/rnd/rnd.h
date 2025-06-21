@@ -159,7 +159,8 @@ typedef struct tagbs7PRIMS
 {
   INT NumOfPrims; /* Number of primitives in array */  
   bs7PRIM *Prims; /* Array of primitives */
-  MATR Trans;     /* Common transformation matrix */
+  MATR Trans; /* Common transformation matrix */
+  VEC MinBB, MaxBB;
 } bs7PRIMS;
 
 BOOL BS7_RndPrimsCreate( bs7PRIMS *Prs, INT NumOfPrims );
