@@ -6,7 +6,8 @@
 
 #include "units/units.h"
 
-#define BS7_Max_Chars1 200
+#define BS7_Max_Chars1 110
+#define INFINITY 1000000
 
 typedef struct 
 {
@@ -46,9 +47,60 @@ static VOID BS7_RndPrimsLoadLab( bs7UNIT_MODEL *Uni, CHAR *FileName )
   }
 }
 
+VOID BS7_WidthCheck( bs7UNIT_MODEL *Uni )
+{
+  FILE *F;
+  INT i, j, k = 0;
+  BOOL is_change;
+
+  for (i = 0; i < BS7_Max_Chars1; i++)
+    for (j = 0; j < BS7_Max_Chars1; j++)
+      Uni->map[i][j] = INFINITY;
+
+  Uni->map[(int)Uni->Pos.X][(int)Uni->Pos.Z] = 0;
+
+
+  is_change = TRUE;
+  while (is_change)
+  {
+    is_change = FALSE;
+    for (i = 0; i < BS7_Max_Chars1; i++)
+      for (j = 0; j < BS7_Max_Chars1; j++)
+        if (Uni->Lab[i][j] != '*')
+        {
+          INT min_v = INFINITY;
+          if (i - 1 > 0 && Uni->map[i - 1][j] != INFINITY && Uni->map[i - 1][j] < min_v)
+            min_v = Uni->map[i - 1][j];
+          if (j - 1 > 0 && Uni->map[i][j - 1] != INFINITY && Uni->map[i][j - 1] < min_v)
+            min_v = Uni->map[i][j - 1];
+          if (i + 1 < BS7_Max_Chars1 && Uni->map[i + 1][j] != INFINITY && Uni->map[i + 1][j] < min_v)
+            min_v = Uni->map[i + 1][j];
+          if (j + 1 < BS7_Max_Chars1 && Uni->map[i][j + 1] != INFINITY && Uni->map[i][j + 1] < min_v)
+            min_v = Uni->map[i][j + 1];
+          if (min_v != INFINITY && Uni->map[i][j] > min_v + 1)
+            is_change = TRUE, Uni->map[i][j] = min_v + 1;
+        } 
+  }
+
+  /* mas check */
+  F = fopen("map.TXT", "a");
+  if (F == NULL)
+    return;
+  fprintf(F, "-------------------\n");
+  for (i = 0; i < BS7_Max_Chars1; i++)
+  {
+    for (j = 0; j < BS7_Max_Chars1; j++)
+       fprintf(F, "%8d ", Uni->map[i][j]);
+    fprintf(F, "\n");
+  }
+  fclose(F);
+}
+
 static VOID BS7_UnitInit( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 {
   VEC B;
+  INT i, j;
+  MATR m1, m2 = MatrIdentity();
 
   Uni->CurDir = 1;
 
@@ -65,12 +117,14 @@ static VOID BS7_UnitInit( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
   Uni->Pr.Trans =
     MatrMulMatr(MatrTranslate(VecAddVec(VecNeg(Uni->Pr.MinBB), VecSet(-B.X / 2, 0, -B.Z / 2))), 
                 MatrScale(VecSet1(50 / B.Z)));
+
+  BS7_WidthCheck(Uni);
 } /*End of 'BS7_UnitInit' function*/
 
 static VOID BS7_UnitClose( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 {
   BS7_RndPrimsFree(&Uni->Lab1);
-  //BS7_RndPrimsFree(&Uni->Bug);
+  BS7_RndPrimsFree(&Uni->Bug);
   BS7_RndPrimsFree(&Uni->Pr);
 } /*End of 'BS7_UnitClose' function*/
 
@@ -78,10 +132,8 @@ static VOID BS7_UnitResponse( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 {
   INT Dx[4] = {0, 1, 0, -1};
   INT Dz[4] = {1, 0, -1, 0};
-  INT k = 0;
-  CHAR Buf[100];
+  CHAR Num[BS7_Max_Chars1][BS7_Max_Chars1];
   VEC POI, V;
-
 
   Uni->CanMoveF = TRUE;
   Uni->CanMoveB = TRUE;
@@ -92,7 +144,7 @@ static VOID BS7_UnitResponse( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
   /* Camera handle */
 
   V = VecSet(Dx[Uni->CurDir], 0, Dz[Uni->CurDir]);
-  POI = VecAddVec(VecSubVec(Uni->Pos, VecMulNum(V, 2)), VecSet(0, 3, 0));
+  POI = VecAddVec(VecSubVec(Uni->Pos, VecMulNum(V, 2)), VecSet(0, 8, 0));
   Uni->CamPos= VecAddVec(Uni->CamPos, VecMulNum(VecSubVec(POI, Uni->CamPos), Ani->DeltaTime));
 
   if (!Ani->IsPause)
@@ -123,6 +175,7 @@ static VOID BS7_UnitResponse( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
       Uni->Pos.Z += Dz[Uni->CurDir] * 0.5;
       Uni->x += Dx[Uni->CurDir] * 0.5;
       Uni->z += Dz[Uni->CurDir] * 0.5;
+      BS7_WidthCheck(Uni);
     }
   }
   if (Uni->CanMoveB)
@@ -133,6 +186,7 @@ static VOID BS7_UnitResponse( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
       Uni->Pos.Z -= Dz[Uni->CurDir] * 0.5;
       Uni->x -= Dx[Uni->CurDir];
       Uni->z -= Dz[Uni->CurDir];
+      BS7_WidthCheck(Uni);
     }
   }
 
@@ -140,31 +194,23 @@ static VOID BS7_UnitResponse( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
     Uni->CurDir = (Uni->CurDir - 1) & 3;
   if (Ani->KeysClick['A'])
     Uni->CurDir = (Uni->CurDir + 1) & 3;
-
-  /*enemy move*/
-  for (i = ; i < BS7_Max_Chars1 - Uni->Pos.X; i++)
-    for (j = 0; j < BS7_Max_Chars1 - Uni->Pos.Z; j++)
-    {
-      if (Lab[Uni->Pos.X + i][Uni->Pos.Z + j] != '*')
-        map[Uni->Pos.X + i][Uni->Pos.Z + j] = k;
-      k++;
-      if (map[Uni->Pos.X + i - 1][Uni->Pos.Z] == k - 1 && map[Uni->Pos.X][Uni->Pos.Z + j - 1] == k - 1)
-        map[Uni->Pos.X + i][Uni->Pos.Z] = k;
-    }
   
-  /* Text */
-  sprintf(Buf, "%c", Uni->Lab[(int)ceil(Uni->x) + Dx[Uni->CurDir]][(int)ceil(Uni->z) + Dz[Uni->CurDir]]);
-  BS7_RndFntDraw(Buf, VecSet(0, -100, 0), 30);
+  /* enemy move */
+  if (Uni->map[(int)Uni->BPos.X][(int)Uni->BPos.Z] < Uni->map[(int)Uni->BPos.X + 1][(int)Uni->BPos.Z])
+    Uni->BPos.X += 1;
+  if (Uni->map[(int)Uni->BPos.X][(int)Uni->BPos.Z] < Uni->map[(int)Uni->BPos.X - 1][(int)Uni->BPos.Z])
+    Uni->BPos.X -= 1;
+  if (Uni->map[(int)Uni->BPos.X][(int)Uni->BPos.Z] < Uni->map[(int)Uni->BPos.X][(int)Uni->BPos.Z + 1])
+    Uni->BPos.Z += 1;
+  if (Uni->map[(int)Uni->BPos.X][(int)Uni->BPos.Z] < Uni->map[(int)Uni->BPos.X][(int)Uni->BPos.Z - 1])
+    Uni->BPos.Z -= 1;
 } /*End of 'BS7_UnitResponse' function*/
 
 static VOID BS7_UnitRender( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 {
   MATR m;
-  CHAR Buf[100];
-  INT i, j;
-  MATR p;
   MATR m1, m2 = MatrIdentity();
-  
+  INT i, j;
 
   m = MatrIdentity();
   m = MatrMulMatr(m, MatrScale(VecSet1(0.01)));
@@ -172,25 +218,20 @@ static VOID BS7_UnitRender( bs7UNIT_MODEL *Uni, bs7ANIM *Ani )
 
   BS7_RndPrimsDraw(&Uni->Pr, MatrMulMatr(m, MatrTranslate(Uni->Pos)));
 
-  //BS7_RndPrimsDraw(&Uni->Cube, MatrTranslate(VecSet(floor(Uni->Pos.X), -0.9, floor(Uni->Pos.Z))));
-
-  p = MatrIdentity();
   for (i = 0; i < BS7_Max_Chars1; i++)
     for (j = 0; j < BS7_Max_Chars1; j++)
+    {
       if (Uni->Lab[i][j] == '*')
       {
         m1 = MatrMulMatr(m2, MatrMulMatr(MatrScale(VecSet1(0.5)), MatrTranslate(VecSet(i, 0.5, j))));
         BS7_RndPrimsDraw(&Uni->Lab1, m1);
       }
       else if (Uni->Lab[i][j] == 'E')
-      {
-        Uni->BPos.X = i;
-        Uni->BPos.Z = j;
-        BS7_RndPrimsDraw(&Uni->Pr, MatrMulMatr(MatrScale(VecSet1(0.01)), MatrTranslate(Uni->BPos)));
-      }
-
-  sprintf(Buf, "%lf, %lf\n %i\n %f %f\n", Uni->Pos.X, Uni->Pos.Z, Uni->CurDir, Uni->x, Uni->z);
-  BS7_RndFntDraw(Buf, VecSet(0, -50, 0), 30);
+        Uni->BPos = VecSet(i, 0, j);
+    }
+  m1 = MatrMulMatr(m2, MatrMulMatr(MatrScale(VecSet1(0.01)), MatrTranslate(Uni->BPos)));
+  BS7_RndPrimsDraw(&Uni->Pr, m1);
+  //BS7_RndPrimsDraw(&Uni->Cube, MatrTranslate(VecSet(floor(Uni->Pos.X), -0.9, floor(Uni->Pos.Z))));
 } /*End of 'BS7_UnitResponse' function*/
 
 bs7UNIT * BS7_UnitCreateModel( VOID )

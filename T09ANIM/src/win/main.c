@@ -93,7 +93,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   BS7_AnimUnitAdd(BS7_UnitCreateGrid());
   BS7_AnimUnitAdd(BS7_UnitCreateInit());
   BS7_AnimUnitAdd(BS7_UnitCreateModel());
-  //BS7_AnimUnitAdd(BS7_UnitCreateBug());
+  //BS7_AnimUnitAdd(BS7_UnitCreateLab());
 
   while (TRUE)
   {

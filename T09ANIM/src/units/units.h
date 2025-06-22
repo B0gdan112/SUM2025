@@ -14,6 +14,6 @@ bs7UNIT * BS7_UnitCreateKuma( VOID );
 bs7UNIT * BS7_UnitCreateInit( VOID );
 bs7UNIT * BS7_UnitCreateGrid( VOID );
 bs7UNIT * BS7_UnitCreateModel( VOID );
-bs7UNIT * BS7_UnitCreateBug( VOID );
+bs7UNIT * BS7_UnitCreateLab( VOID );
 
 #endif /*__units_h_ */

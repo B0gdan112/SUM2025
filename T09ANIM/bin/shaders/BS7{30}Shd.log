@@ -1,42 +1,231 @@
-defaultfrag
-0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "L"
-0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "LC"
+shelfgeom
+0(42) : error C1503: undefined variable "maxa"
+0(42) : error C1503: undefined variable "tt"
+0(42) : error C1503: undefined variable "ts"
+0(52) : error C1503: undefined variable "maxa"
+0(52) : error C1503: undefined variable "tt"
+0(52) : error C1503: undefined variable "ts"
+0(58) : error C1503: undefined variable "maxa"
+0(58) : error C1503: undefined variable "tt"
+0(58) : error C1503: undefined variable "ts"
 
-defaultfrag
-0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "L"
-0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "LC"
+shelfgeom
+0(42) : error C1503: undefined variable "maxa"
+0(42) : error C1503: undefined variable "tt"
+0(42) : error C1503: undefined variable "ts"
+0(52) : error C1503: undefined variable "maxa"
+0(52) : error C1503: undefined variable "tt"
+0(52) : error C1503: undefined variable "ts"
+0(58) : error C1503: undefined variable "maxa"
+0(58) : error C1503: undefined variable "tt"
+0(58) : error C1503: undefined variable "ts"
 
-defaultfrag
-0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "L"
-0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "LC"
+shelfgeom
+0(42) : error C1503: undefined variable "maxa"
+0(42) : error C1503: undefined variable "tt"
+0(42) : error C1503: undefined variable "ts"
+0(52) : error C1503: undefined variable "maxa"
+0(52) : error C1503: undefined variable "tt"
+0(52) : error C1503: undefined variable "ts"
+0(58) : error C1503: undefined variable "maxa"
+0(58) : error C1503: undefined variable "tt"
+0(58) : error C1503: undefined variable "ts"
 
-defaultfrag
-0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "L"
-0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "LC"
+shelfPROG
+Geometry info
+-------------
+0(13) : warning C7050: "Angle" might be used before being initialized
 
-defaultfrag
-0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "L"
-0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "LC"
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
 
-defaultfrag
-0(21) : error C1038: declaration of "L" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "L"
-0(22) : error C1038: declaration of "LC" conflicts with previous declaration at 0(18)
-0(18) : error C1004: in and out can't be used on local variable "LC"
+shelfPROG
+Geometry info
+-------------
+0(13) : warning C7050: "Angle" might be used before being initialized
 
-defaultfrag
-0(46) : error C1503: undefined variable "cAMlOC"
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
 
-defaultfrag
-0(46) : error C1503: undefined variable "cAMlOC"
+shelfPROG
+Geometry info
+-------------
+0(13) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
+
+cubePROG
+Geometry info
+-------------
+0(14) : warning C7050: "Angle" might be used before being initialized
+
+Link info
+---------
+error: "VertexId" not declared as an output from the previous stage
 

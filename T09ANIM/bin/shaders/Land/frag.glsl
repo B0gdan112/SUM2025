@@ -34,7 +34,7 @@ vec3 Shade( vec3 P, vec3 N )
   vec3 Diff = Kd;
   if (IsTexture0)
   {
-    vec4 tc = texture(Tex, DrawTexCoord);
+    vec4 tc = texture(Tex, DrawTexCoord * 20);
     Diff = tc.rgb;
   }
   color += LC * Diff * max(0, dot(N, L));
