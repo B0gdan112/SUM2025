@@ -9,8 +9,7 @@
 typedef unsigned long long UINT64;
 
 static UINT64
-    StartTime,    /* Start program time */
-    OldTime,      /* Previous frame time */
+    StartTime,    /* Start program time */      /* Previous frame time */
     OldTimeFPS,   /* Old time FPS measurement */
     PauseTime,    /* Time during pause period */
     TimePerSec,   /* Timer resolution */
@@ -23,7 +22,7 @@ VOID BS7_TimerInit( VOID )
   QueryPerformanceFrequency(&t);
   TimePerSec = t.QuadPart;
   QueryPerformanceCounter(&t);
-  StartTime = OldTime = OldTimeFPS = t.QuadPart;
+  StartTime = BS7_Anim.OldTime = OldTimeFPS = t.QuadPart;
   FrameCounter = 0;
   BS7_Anim.IsPause = FALSE;
   BS7_Anim.FPS = 30.0;
@@ -37,12 +36,12 @@ VOID BS7_TimerResponse( VOID )
   QueryPerformanceCounter(&t);
   /* Global time */
   BS7_Anim.GlobalTime = (DBL)(t.QuadPart - StartTime) / TimePerSec;
-  BS7_Anim.GlobalDeltaTime = (DBL)(t.QuadPart - OldTime) / TimePerSec;
+  BS7_Anim.GlobalDeltaTime = (DBL)(t.QuadPart - BS7_Anim.OldTime) / TimePerSec;
   /* Time with pause */
   if (BS7_Anim.IsPause)
   {
     BS7_Anim.DeltaTime = 0;
-    PauseTime += t.QuadPart - OldTime;
+    PauseTime += t.QuadPart - BS7_Anim.OldTime;
   }
   else
   {
@@ -58,5 +57,5 @@ VOID BS7_TimerResponse( VOID )
     OldTimeFPS = t.QuadPart;
     FrameCounter = 0;
   }
-  OldTime = t.QuadPart; 
+  BS7_Anim.OldTime = t.QuadPart; 
 }

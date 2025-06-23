@@ -15,6 +15,9 @@ static bs7PRIM BS7_RndFntChars[256];
  
 /* Font material */
 static INT BS7_RndFntMtlNo;
+
+/* Font material */
+static INT BS7_RndFnt3DMtlNo;
  
 /* Load font from .G3DF file function.
  * ARGUMENTS:
@@ -59,9 +62,12 @@ BOOL BS7_RndFntLoad( CHAR *FileName )
  
   mtl = BS7_RndMtlGetDef();
   strcpy(mtl.Name, FileName);
-  mtl.Tex[0] = BS7_RndTexAddImg(FileName, W, H, 4, Tex);
+  mtl.Tex[0] = i = BS7_RndTexAddImg(FileName, W, H, 4, Tex);
   mtl.ShdNo = BS7_RndShdAdd("font");
   BS7_RndFntMtlNo = BS7_RndMtlAdd(&mtl);
+ 
+  mtl.ShdNo = BS7_RndShdAdd("font3d");
+  BS7_RndFnt3DMtlNo = BS7_RndMtlAdd(&mtl);
  
   for (i = 0; i < 256; i++)
   {
@@ -128,3 +134,26 @@ VOID BS7_RndFntDraw( CHAR *Str, VEC Pos, FLT Size )
     Str++;
   }
 } /* End of 'BS7_RndFntDraw' function */
+
+/* Draw string function.
+ * ARGUMENTS:
+ *   - string to draw:
+ *       CHAR *Str;
+ *   - draw position:
+ *       VEC Pos;
+ *   - font size:
+ *      FLT Size;
+ * RETURNS: None.
+ */
+VOID BS7_RndFntDraw3D( CHAR *Str, VEC Pos, FLT Size )
+{
+  INT i;
+
+  for (i = 0; i < 256; i++)
+    BS7_RndFntChars[i].MtlNo = BS7_RndFnt3DMtlNo;
+
+  BS7_RndFntDraw(Str, Pos, Size);
+
+  for (i = 0; i < 256; i++)
+    BS7_RndFntChars[i].MtlNo = BS7_RndFntMtlNo;
+} /* End of 'BS7_RndFntDraw3D' function */

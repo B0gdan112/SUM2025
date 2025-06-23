@@ -133,4 +133,17 @@ VOID BS7_RndFntDraw( CHAR *Str, VEC Pos, FLT Size );
  */
 INT BS7_RndTexAddFmt( CHAR *Name, INT W, INT H, INT GLType );
 
+/* Draw string function.
+ * ARGUMENTS:
+ *   - string to draw:
+ *       CHAR *Str;
+ *   - draw position:
+ *       VEC Pos;
+ *   - font size:
+ *      FLT Size;
+ * RETURNS: None.
+ */
+VOID BS7_RndFntDraw3D( CHAR *Str, VEC Pos, FLT Size );
+
+
 #endif /* __rndres_h_ */

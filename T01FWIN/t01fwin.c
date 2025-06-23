@@ -101,7 +101,7 @@ LRESULT CALLBACK MainWindowFunc( HWND hWnd, UINT Msg,
   {
   case WM_PAINT:
     hDC = BeginPaint(hWnd, &ps);
-    Ellipse(hDC, 500, 300, 800, 500);
+    //Ellipse(hDC, 500, 300, 800, 500);
     EndPaint(hWnd, &ps);
     return 0;
   case WM_DESTROY:

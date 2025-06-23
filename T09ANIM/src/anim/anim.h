@@ -35,7 +35,7 @@ typedef struct tagbs7ANIM
   bs7UNIT *Units[BS7_MAX_UNITS];
   INT NumOfUnits;
 
-  DBL GlobalTime, GlobalDeltaTime, Time, DeltaTime, FPS;
+  DBL GlobalTime, GlobalDeltaTime, Time, DeltaTime, FPS, OldTime;
   BOOL IsPause;
 
   BYTE Keys[256];
